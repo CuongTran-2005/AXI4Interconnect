@@ -1,0 +1,88 @@
+# =====================================================
+# Intel Quartus Prime
+# =====================================================
+
+# Compilation database
+db/
+incremental_db/
+
+# Simulation
+simulation/
+sim/
+work/
+transcript
+vsim.wlf
+modelsim.ini
+
+# Output files
+output_files/
+greybox_tmp/
+
+# Temporary files
+tmp/
+temp/
+*.bak
+*.log
+*.smsg
+*.summary
+*.done
+*.qws
+
+# Generated programming files
+*.sof
+*.pof
+*.jam
+*.jbc
+*.rbf
+*.rpd
+*.svf
+
+# Reports
+*.rpt
+*.eqn
+*.pin
+*.fit.*
+*.sta.*
+*.map.*
+*.asm.*
+*.flow.*
+
+# Netlists
+*.vo
+*.vho
+*.vqm
+*.cmp
+
+# Memory initialization generated files
+*.hex
+*.mif
+
+# SignalTap
+*.stp.bak
+
+# Platform Designer / Qsys generated files
+*.qsys_edit/
+*.ip/
+*.spd
+*.bsf
+
+# Eclipse / Nios II
+.metadata/
+.settings/
+
+# VS Code
+.vscode/
+
+# CLion
+.idea/
+cmake-build-*/
+
+# Visual Studio
+.vs/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
