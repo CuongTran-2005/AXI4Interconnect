@@ -28,12 +28,29 @@ module dsp_slv_channel #(
 	 
     input [MST_ID_W-1:0] 					ctl_master_id_ar_i,
     input [MST_ID_W-1:0] 					ctl_master_id_r_i,
+
+    //fifo signal
+    output [MST_AMT -1 : 0]                 ar_fifo_full_o,
+    output [MST_AMT -1 : 0]                 ar_fifo_empty_o,
+    input  [MST_AMT -1 : 0]                 ar_fifo_wr_en_i,
+    input  [MST_AMT -1 : 0]                 ar_fifo_rd_en_i,
+
+    output [MST_AMT -1 : 0]                 aw_fifo_full_o,
+    output [MST_AMT -1 : 0]                 aw_fifo_empty_o,
+    input  [MST_AMT -1 : 0]                 aw_fifo_wr_en_i,
+    input  [MST_AMT -1 : 0]                 aw_fifo_rd_en_i,
+
+    output [MST_AMT -1 : 0]                 w_fifo_full_o,
+    output [MST_AMT -1 : 0]                 w_fifo_empty_o,
+    input  [MST_AMT -1 : 0]                 w_fifo_wr_en_i,
+    input  [MST_AMT -1 : 0]                 w_fifo_rd_en_i,
+
     //R/B ID
-    output [TRANS_MST_ID_W-1:0]                 r_trans_mst_id,
-    output [TRANS_MST_ID_W-1:0]                 b_trans_mst_id,
+    // output [TRANS_MST_ID_W-1:0]                 r_trans_mst_id, //bo
+    // output [TRANS_MST_ID_W-1:0]                 b_trans_mst_id,
 	//fifo req
-	output [MST_AMT-1:0]                    fifo_ar_req,
-    output [MST_AMT-1:0]                    fifo_aw_req,
+	// output [MST_AMT-1:0]                        fifo_ar_req, //bo
+    // output [MST_AMT-1:0]                        fifo_aw_req,
     //-----AR dsp_slv channel------
 	 //slave side fixed
 	output   [TRANS_MST_ID_W-1:0]                       s_ARID_o, 
@@ -42,8 +59,8 @@ module dsp_slv_channel #(
     output   [TRANS_DATA_LEN_W-1:0]          	        s_ARLEN_o,
     output   [TRANS_DATA_SIZE_W -1:0]                   s_ARSIZE_o,
     output   [TRANS_QOS_W-1:0]                          s_ARQOS_o,
-    output                                              s_ARVALID_o,
-    input                                               s_ARREADY_i,
+    // output                                              s_ARVALID_o,
+    // input                                               s_ARREADY_i,
     // master side fixed
     input   [TRANS_MST_ID_W * MST_AMT-1:0]              ma_ARID_i,
     input   [ADDR_WIDTH * MST_AMT-1:0]                  ma_ARADDR_i,
@@ -51,23 +68,23 @@ module dsp_slv_channel #(
     input   [TRANS_DATA_LEN_W * MST_AMT-1:0]            ma_ARLEN_i,
     input   [TRANS_DATA_SIZE_W * MST_AMT-1:0]           ma_ARSIZE_i,
     input   [TRANS_QOS_W *MST_AMT-1:0]                  ma_ARQOS_i,
-    input   [MST_AMT -1:0]                              ma_ARVALID_i,
-    output  [MST_AMT -1:0]                              ma_ARREADY_o,
+    // input   [MST_AMT -1:0]                              ma_ARVALID_i,
+    // output  [MST_AMT -1:0]                              ma_ARREADY_o,
 	 //-----R dsp_mst channel------
 	 //slave side fixed
 	input  [TRANS_MST_ID_W-1:0]    s_RID_i,
     input  [DATA_WIDTH-1:0]        s_RDATA_i,
     input  [TRANS_WR_RESP_W-1:0]   s_RRESP_i,
     input                          s_RLAST_i,
-    input                          s_RVALID_i,
-    output                           s_RREADY_o,
+    // input                          s_RVALID_i,
+    // output                           s_RREADY_o,
 	// Master side fixed
     output  [TRANS_MST_ID_W*MST_AMT-1:0]      ma_RID_o,
     output  [DATA_WIDTH*MST_AMT-1:0]          ma_RDATA_o,
     output  [TRANS_WR_RESP_W*MST_AMT-1:0]     ma_RRESP_o,
     output  [MST_AMT-1:0]                     ma_RLAST_o,
-    output  [MST_AMT-1:0]                     ma_RVALID_o,
-    input   [MST_AMT-1:0]                     ma_RREADY_i,
+    // output  [MST_AMT-1:0]                     ma_RVALID_o,
+    // input   [MST_AMT-1:0]                     ma_RREADY_i,
 	 //-----AW dsp_mst channel -------
     // Slave side fixed
     output  [TRANS_MST_ID_W-1:0]      s_AWID_o,
@@ -76,8 +93,8 @@ module dsp_slv_channel #(
     output  [TRANS_DATA_LEN_W-1:0]    s_AWLEN_o,
     output  [TRANS_DATA_SIZE_W-1:0]   s_AWSIZE_o,
     output   [TRANS_QOS_W-1:0]        s_AWQOS_o,
-    output                            s_AWVALID_o,
-    input                             s_AWREADY_i,
+    // output                            s_AWVALID_o,
+    // input                             s_AWREADY_i,
 
     // Master side fixed
     input   [TRANS_MST_ID_W*MST_AMT-1:0]      ma_AWID_i,
@@ -86,33 +103,33 @@ module dsp_slv_channel #(
     input   [TRANS_DATA_LEN_W*MST_AMT-1:0]    ma_AWLEN_i,
     input   [TRANS_DATA_SIZE_W*MST_AMT-1:0]   ma_AWSIZE_i,
     input   [TRANS_QOS_W *MST_AMT-1:0]        ma_AWQOS_i,
-    input   [MST_AMT-1:0]                     ma_AWVALID_i,
-    output  [MST_AMT-1:0]                     ma_AWREADY_o,
+    // input   [MST_AMT-1:0]                     ma_AWVALID_i,
+    // output  [MST_AMT-1:0]                     ma_AWREADY_o,
 	 //-----W dsp_mst channel -------
         // Slave side fixed
     output  [DATA_WIDTH-1:0]          s_WDATA_o,
     output                            s_WLAST_o,
-    output                            s_WVALID_o,
-    input                             s_WREADY_i,
+    // output                            s_WVALID_o,
+    // input                             s_WREADY_i,
 
     // Master side fixed
     input   [DATA_WIDTH*MST_AMT-1:0]  ma_WDATA_i,
     input   [MST_AMT-1:0]             ma_WLAST_i,
-    input   [MST_AMT-1:0]             ma_WVALID_i,
-    output  [MST_AMT-1:0]             ma_WREADY_o,
+    // input   [MST_AMT-1:0]             ma_WVALID_i,
+    // output  [MST_AMT-1:0]             ma_WREADY_o,
 	 //----B dsp_mst channel --------
 	  // Master interface
     // Slave side fixed
     input   [TRANS_MST_ID_W-1:0]      s_BID_i,
     input   [TRANS_WR_RESP_W-1:0]     s_BRESP_i,
-    input                             s_BVALID_i,
-    output                            s_BREADY_o,
+    // input                             s_BVALID_i,
+    // output                            s_BREADY_o,
 
     // Master side fixed
     output  [TRANS_MST_ID_W*MST_AMT-1:0]      ma_BID_o,
-    output  [TRANS_WR_RESP_W*MST_AMT-1:0]     ma_BRESP_o,
-    output  [MST_AMT-1:0]                     ma_BVALID_o,
-    input   [MST_AMT-1:0]                     ma_BREADY_i
+    output  [TRANS_WR_RESP_W*MST_AMT-1:0]     ma_BRESP_o
+    // output  [MST_AMT-1:0]                     ma_BVALID_o,
+    // input   [MST_AMT-1:0]                     ma_BREADY_i
 );
 
 // FIFO WIDTH
@@ -164,8 +181,8 @@ wire [TRANS_DATA_SIZE_W*MST_AMT-1:0]   fifo_ARSIZE_o;
 wire [TRANS_QOS_W*MST_AMT-1:0]          fifo_ARQOS_o;
 
 
-wire [MST_AMT-1:0] fifo_ARVALID_o;
-wire [MST_AMT-1:0] fifo_ARREADY_i;
+// wire [MST_AMT-1:0] fifo_ARVALID_o;
+// wire [MST_AMT-1:0] fifo_ARREADY_i;
 // FIFO control
 wire [MST_AMT-1:0] ar_fifo_wr_en;
 wire [MST_AMT-1:0] ar_fifo_rd_en;
@@ -191,7 +208,6 @@ begin : AR_FIFO_GEN
                 ma_ARLEN_i[ar_idx*TRANS_DATA_LEN_W +:TRANS_DATA_LEN_W],
                 ma_ARSIZE_i[ar_idx*TRANS_DATA_SIZE_W +:TRANS_DATA_SIZE_W],
                 ma_ARQOS_i[ar_idx*TRANS_QOS_W +:TRANS_QOS_W]
-                
             }
         ),
         .wr_valid_i(
@@ -214,18 +230,11 @@ begin : AR_FIFO_GEN
 end
 endgenerate
 // FIFO handshake
-generate
-for(ar_idx = 0; ar_idx < MST_AMT; ar_idx = ar_idx + 1)
-begin : AR_FIFO_SIGNAL
-    // Master -> FIFO
-    assign ma_ARREADY_o[ar_idx] = ~ar_fifo_full[ar_idx];
-    assign ar_fifo_wr_en[ar_idx] = ma_ARVALID_i[ar_idx] & ma_ARREADY_o[ar_idx];
-    // FIFO -> AR_dsp_slv_channel
-    assign fifo_ARVALID_o[ar_idx] = ~ar_fifo_empty[ar_idx];
-    assign ar_fifo_rd_en[ar_idx] = fifo_ARVALID_o[ar_idx] & fifo_ARREADY_i[ar_idx];
-    assign fifo_ar_req[ar_idx] = ma_ARVALID_i[ar_idx] & ma_ARREADY_o[ar_idx];
-end
-endgenerate
+assign ar_fifo_wr_en = ar_fifo_wr_en_i;
+assign ar_fifo_rd_en = ar_fifo_rd_en_i;
+assign ar_fifo_full_o = ar_fifo_full;
+assign ar_fifo_empty_o = ar_fifo_empty;
+
 // FIFO unpack
 generate
 for(ar_idx = 0; ar_idx < MST_AMT; ar_idx = ar_idx + 1)
@@ -264,8 +273,8 @@ u_AR_dsp_slv_channel (
     .s_ARLEN_o      (s_ARLEN_o),
     .s_ARSIZE_o     (s_ARSIZE_o),
     .s_ARQOS_o      (s_ARQOS_o),
-    .s_ARVALID_o    (s_ARVALID_o),
-    .s_ARREADY_i    (s_ARREADY_i),
+    // .s_ARVALID_o    (s_ARVALID_o),
+    // .s_ARREADY_i    (s_ARREADY_i),
     // Input từ FIFO
     .ma_ARID_i      (fifo_ARID_o),
     .ma_ARADDR_i    (fifo_ARADDR_o),
@@ -273,9 +282,9 @@ u_AR_dsp_slv_channel (
     .ma_ARLEN_i     (fifo_ARLEN_o),
     .ma_ARSIZE_i    (fifo_ARSIZE_o),
     .ma_ARQOS_i    (fifo_ARQOS_o),
-    .ma_ARVALID_i   (fifo_ARVALID_o),
+    // .ma_ARVALID_i   (fifo_ARVALID_o),
     // Read enable FIFO
-    .ma_ARREADY_o   (fifo_ARREADY_i),
+    // .ma_ARREADY_o   (fifo_ARREADY_i),
     // Chọn master
     .ctl_MST_ID_i   (ctl_master_id_ar_i)
 );
@@ -298,8 +307,6 @@ wire [TRANS_DATA_LEN_W*MST_AMT-1:0]    fifo_AWLEN_o;
 wire [TRANS_DATA_SIZE_W*MST_AMT-1:0]   fifo_AWSIZE_o;
 wire [TRANS_QOS_W*MST_AMT-1:0]   fifo_AWQOS_o;
 
-wire [MST_AMT-1:0] fifo_AWVALID_o;
-wire [MST_AMT-1:0] fifo_AWREADY_i;
 // FIFO control
 wire [MST_AMT-1:0] aw_fifo_wr_en;
 wire [MST_AMT-1:0] aw_fifo_rd_en;
@@ -342,20 +349,10 @@ begin : AW_FIFO_GEN
 end
 endgenerate
 // FIFO handshake
-
-generate
-for(aw_idx = 0; aw_idx < MST_AMT; aw_idx = aw_idx + 1)
-begin : AW_FIFO_SIGNAL
-    // Master -> FIFO
-    assign ma_AWREADY_o[aw_idx] = ~aw_fifo_full[aw_idx];
-
-    assign aw_fifo_wr_en[aw_idx] = ma_AWVALID_i[aw_idx] & ma_AWREADY_o[aw_idx];
-    // FIFO -> AR_dsp_slv_channel
-    assign fifo_AWVALID_o[aw_idx] = ~aw_fifo_empty[aw_idx];
-    assign aw_fifo_rd_en[aw_idx] = fifo_AWVALID_o[aw_idx] & fifo_AWREADY_i[aw_idx];
-    assign fifo_aw_req[aw_idx] = ma_AWVALID_i[aw_idx] & ma_AWREADY_o[aw_idx];
-end
-endgenerate
+assign aw_fifo_wr_en = aw_fifo_wr_en_i;
+assign aw_fifo_rd_en = aw_fifo_rd_en_i;
+assign aw_fifo_full_o = aw_fifo_full;
+assign aw_fifo_empty_o = aw_fifo_empty;
 
 // FIFO unpack
 
@@ -393,8 +390,8 @@ u_AW_dsp_slv_channel (
     .s_AWLEN_o      (s_AWLEN_o),
     .s_AWSIZE_o     (s_AWSIZE_o),
     .s_AWQOS_o     (s_AWQOS_o),
-    .s_AWVALID_o    (s_AWVALID_o),
-    .s_AWREADY_i    (s_AWREADY_i),
+    // .s_AWVALID_o    (s_AWVALID_o),
+    // .s_AWREADY_i    (s_AWREADY_i),
     // Input từ FIFO
     .ma_AWID_i      (fifo_AWID_o),
     .ma_AWADDR_i    (fifo_AWADDR_o),
@@ -402,9 +399,9 @@ u_AW_dsp_slv_channel (
     .ma_AWLEN_i     (fifo_AWLEN_o),
     .ma_AWSIZE_i    (fifo_AWSIZE_o),
     .ma_AWQOS_i    (fifo_AWQOS_o),
-    .ma_AWVALID_i   (fifo_AWVALID_o),
+    // .ma_AWVALID_i   (fifo_AWVALID_o),
     // Read enable FIFO
-    .ma_AWREADY_o   (fifo_AWREADY_i),
+    // .ma_AWREADY_o   (fifo_AWREADY_i),
     // Chọn master
     .ctl_MST_ID_i   (ctl_master_id_aw_i)
 );
@@ -424,9 +421,7 @@ wire [MST_AMT-1:0] w_fifo_full;
 
 wire [DATA_WIDTH*MST_AMT-1:0] fifo_WDATA_o;
 wire [MST_AMT-1:0]            fifo_WLAST_o;
-wire [MST_AMT-1:0]            fifo_WVALID_o;
 
-wire [MST_AMT-1:0]            fifo_WREADY_i;
 // FIFO control
 wire [MST_AMT-1:0] w_fifo_wr_en;
 wire [MST_AMT-1:0] w_fifo_rd_en;
@@ -473,27 +468,11 @@ begin : W_FIFO_GEN
 end
 endgenerate
 // FIFO handshake
-generate
-for(w_idx = 0; w_idx < MST_AMT; w_idx = w_idx + 1)
-begin : W_FIFO_SIGNAL
-    // Master -> FIFO
-    assign ma_WREADY_o[w_idx] =
-            ~w_fifo_full[w_idx];
+assign w_fifo_wr_en = w_fifo_wr_en_i;
+assign w_fifo_rd_en = w_fifo_rd_en_i;
+assign w_fifo_full_o = w_fifo_full;
+assign w_fifo_empty_o = w_fifo_empty;
 
-    assign w_fifo_wr_en[w_idx] =
-            ma_WVALID_i[w_idx] &
-            ma_WREADY_o[w_idx];
-
-    // FIFO -> W_dsp_slv_channel
-    assign fifo_WVALID_o[w_idx] =
-            ~w_fifo_empty[w_idx];
-
-    assign w_fifo_rd_en[w_idx] =
-            fifo_WVALID_o[w_idx] &
-            fifo_WREADY_i[w_idx];
-
-end
-endgenerate
 // FIFO unpack
 generate
 for(w_idx = 0; w_idx < MST_AMT; w_idx = w_idx + 1)
@@ -527,14 +506,14 @@ u_W_dsp_slv_channel (
     // Slave side
     .s_WDATA_o      (s_WDATA_o),
     .s_WLAST_o      (s_WLAST_o),
-    .s_WVALID_o     (s_WVALID_o),
-    .s_WREADY_i     (s_WREADY_i),
+    //.s_WVALID_o     (s_WVALID_o),
+    //.s_WREADY_i     (s_WREADY_i),
     // Input từ FIFO
     .ma_WDATA_i     (fifo_WDATA_o),
     .ma_WLAST_i     (fifo_WLAST_o),
-    .ma_WVALID_i    (fifo_WVALID_o),
+    //.ma_WVALID_i    (fifo_WVALID_o),
     // Read enable FIFO
-    .ma_WREADY_o    (fifo_WREADY_i),
+    //.ma_WREADY_o    (fifo_WREADY_i),
     // Chọn master
     .ctl_MST_ID_i   (ctl_master_id_w_i)
 );
@@ -565,8 +544,8 @@ u_R_dsp_slv_channel (
     .s_RDATA_i      (s_RDATA_i),
     .s_RRESP_i      (s_RRESP_i),
     .s_RLAST_i      (s_RLAST_i),
-    .s_RVALID_i     (s_RVALID_i),
-    .s_RREADY_o     (s_RREADY_o),
+    // .s_RVALID_i     (s_RVALID_i),
+    // .s_RREADY_o     (s_RREADY_o),
 
     //-------------------------------------
     // Master interface
@@ -576,8 +555,8 @@ u_R_dsp_slv_channel (
     .ma_RDATA_o     (ma_RDATA_o),
     .ma_RRESP_o     (ma_RRESP_o),
     .ma_RLAST_o     (ma_RLAST_o),
-    .ma_RVALID_o    (ma_RVALID_o),
-    .ma_RREADY_i    (ma_RREADY_i),
+    // .ma_RVALID_o    (ma_RVALID_o),
+    // .ma_RREADY_i    (ma_RREADY_i),
 
     //-------------------------------------
     // Controller
@@ -585,7 +564,7 @@ u_R_dsp_slv_channel (
 
     .ctl_MST_ID_i   (ctl_master_id_r_i)
 );
-assign r_trans_mst_id = s_RID_i;
+//assign r_trans_mst_id = s_RID_i;
 // B channel demux
 //----------------------------------------------------------
 
@@ -605,8 +584,8 @@ u_B_dsp_slv_channel (
 
     .s_BID_i        (s_BID_i),
     .s_BRESP_i      (s_BRESP_i),
-    .s_BVALID_i     (s_BVALID_i),
-    .s_BREADY_o     (s_BREADY_o),
+    // .s_BVALID_i     (s_BVALID_i),
+    // .s_BREADY_o     (s_BREADY_o),
 
     //-------------------------------------
     // Master interface
@@ -614,8 +593,8 @@ u_B_dsp_slv_channel (
 
     .ma_BID_o       (ma_BID_o),
     .ma_BRESP_o     (ma_BRESP_o),
-    .ma_BVALID_o    (ma_BVALID_o),
-    .ma_BREADY_i    (ma_BREADY_i),
+    // .ma_BVALID_o    (ma_BVALID_o),
+    // .ma_BREADY_i    (ma_BREADY_i),
 
     //-------------------------------------
     // Controller
@@ -623,5 +602,5 @@ u_B_dsp_slv_channel (
 
     .ctl_MST_ID_i   (ctl_master_id_b_i)
 );
-assign b_trans_mst_id = s_BID_i;
+//assign b_trans_mst_id = s_BID_i;
 endmodule

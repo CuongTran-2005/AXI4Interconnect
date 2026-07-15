@@ -14,8 +14,8 @@ module R_dsp_mst_channel #(
     output  [DATA_WIDTH-1:0]        m_RDATA_o,
     output  [TRANS_WR_RESP_W-1:0]   m_RRESP_o,
     output                          m_RLAST_o,
-    output                          m_RVALID_o,
-    input                           m_RREADY_i,
+    //output                          m_RVALID_o,
+    //input                           m_RREADY_i,
 
     //====================================================
     // Slave arbiter interface
@@ -24,9 +24,8 @@ module R_dsp_mst_channel #(
     input   [DATA_WIDTH*SLV_AMT-1:0]      sa_RDATA_i,
     input   [TRANS_WR_RESP_W*SLV_AMT-1:0] sa_RRESP_i,
     input   [SLV_AMT-1:0]                 sa_RLAST_i,
-    input   [SLV_AMT-1:0]                 sa_RVALID_i,
-
-    output  [SLV_AMT-1:0]                 sa_RREADY_o,
+    //input   [SLV_AMT-1:0]                 sa_RVALID_i,
+    //output  [SLV_AMT-1:0]                 sa_RREADY_o,
 
     //====================================================
     // Controller interface
@@ -42,8 +41,8 @@ module R_dsp_mst_channel #(
             TRANS_MST_ID_W +
             DATA_WIDTH +
             TRANS_WR_RESP_W +
-            1 +     // RLAST
-            1;      // RVALID
+            1      // RLAST
+            ;      // RVALID
 
     wire [DATA_IN_MUX_WIDTH*SLV_AMT-1:0] mux_in;
     wire [DATA_IN_MUX_WIDTH-1:0]         mux_out;
@@ -78,9 +77,9 @@ module R_dsp_mst_channel #(
                     TRANS_WR_RESP_W
                 ],
 
-                sa_RLAST_i[idx],
+                sa_RLAST_i[idx]
 
-                sa_RVALID_i[idx]
+                //sa_RVALID_i[idx]
             };
 
         end
@@ -107,24 +106,24 @@ module R_dsp_mst_channel #(
         m_RID_o,
         m_RDATA_o,
         m_RRESP_o,
-        m_RLAST_o,
-        m_RVALID_o
+        m_RLAST_o
+        //m_RVALID_o
     } = mux_out;
 
     //----------------------------------------------------
     // RREADY routing
     //----------------------------------------------------
 
-    generate
-        for(idx=0; idx<SLV_AMT; idx=idx+1)
-        begin : R_READY_GEN
+    // generate
+    //     for(idx=0; idx<SLV_AMT; idx=idx+1)
+    //     begin : R_READY_GEN
 
-            assign sa_RREADY_o[idx] =
-                    (ctl_SLV_ID_i == idx)
-                    ? m_RREADY_i
-                    : 1'b0;
+    //         assign sa_RREADY_o[idx] =
+    //                 (ctl_SLV_ID_i == idx)
+    //                 ? m_RREADY_i
+    //                 : 1'b0;
 
-        end
-    endgenerate
+    //     end
+    // endgenerate
 
 endmodule

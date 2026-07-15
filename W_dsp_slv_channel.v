@@ -19,16 +19,16 @@ module W_dsp_slv_channel #(
 //--------------------------------------------------
 input   [DATA_WIDTH*MST_AMT-1:0]    ma_WDATA_i,
 input   [MST_AMT-1:0]               ma_WLAST_i,
-input   [MST_AMT-1:0]               ma_WVALID_i,
-output  [MST_AMT-1:0]               ma_WREADY_o,
+// input   [MST_AMT-1:0]               ma_WVALID_i,
+// output  [MST_AMT-1:0]               ma_WREADY_o,
 
 //--------------------------------------------------
 // Slave interface
 //--------------------------------------------------
 output  [DATA_WIDTH-1:0]            s_WDATA_o,
 output                              s_WLAST_o,
-output                              s_WVALID_o,
-input                               s_WREADY_i,
+// output                              s_WVALID_o,
+// input                               s_WREADY_i,
 
 //--------------------------------------------------
 // Controller
@@ -43,8 +43,8 @@ input   [MST_ID_W-1:0]              ctl_MST_ID_i
 
 localparam DATA_IN_MUX_WIDTH =
     DATA_WIDTH +
-    1 +     // WLAST
-    1;      // WVALID
+    1    // WLAST
+    ;      // WVALID
 
 //--------------------------------------------------
 // MUX signals
@@ -75,9 +75,9 @@ generate
                 DATA_WIDTH
             ],
 
-            ma_WLAST_i[idx],
+            ma_WLAST_i[idx]
 
-            ma_WVALID_i[idx]
+            //ma_WVALID_i[idx]
         };
 
     end
@@ -103,26 +103,26 @@ common_mux #(
 
 assign {
     s_WDATA_o,
-    s_WLAST_o,
-    s_WVALID_o
+    s_WLAST_o
+    //s_WVALID_o
 } = mux_out;
 
 //--------------------------------------------------
 // READY demux
 //--------------------------------------------------
 
-generate
+// generate
 
-    for(idx=0; idx<MST_AMT; idx=idx+1)
-    begin : W_READY_DEMUX
+//     for(idx=0; idx<MST_AMT; idx=idx+1)
+//     begin : W_READY_DEMUX
 
-        assign ma_WREADY_o[idx] =
-            (ctl_MST_ID_i == idx)
-            ? s_WREADY_i
-            : 1'b0;
+//         assign ma_WREADY_o[idx] =
+//             (ctl_MST_ID_i == idx)
+//             ? s_WREADY_i
+//             : 1'b0;
 
-    end
+//     end
 
-endgenerate
+// endgenerate
 
 endmodule

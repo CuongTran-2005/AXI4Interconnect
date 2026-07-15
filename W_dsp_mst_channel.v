@@ -22,18 +22,18 @@ module W_dsp_mst_channel #(
 	// Master interface
 	 input   [DATA_WIDTH-1:0]                            m_WDATA_i,
     input                                               m_WLAST_i,
-    input                                               m_WVALID_i,
-    output                                              m_WREADY_o,
+    //input                                               m_WVALID_i,
+    //output                                              m_WREADY_o,
     // Slave arbiter interface
 	 output   [DATA_WIDTH * SLV_AMT-1:0]                 sa_WDATA_o,
     output   [SLV_AMT -1:0]                             sa_WLAST_o,
-    output   [SLV_AMT-1:0]                              sa_WVALID_o,
-    input    [SLV_AMT -1:0]                             sa_WREADY_i,
+    //output   [SLV_AMT-1:0]                              sa_WVALID_o,
+    //input    [SLV_AMT -1:0]                             sa_WREADY_i,
     //control (decoder) interface
     input   [SLV_ID_W -1:0]                             ctl_SLV_ID_i
 );
     //local parameter cho demux
-    localparam DATA_IN_MUX_WIDTH = DATA_WIDTH + 2;
+    localparam DATA_IN_MUX_WIDTH = DATA_WIDTH + 1;
     localparam DATA_OUT_MUX_WIDTH = DATA_IN_MUX_WIDTH * SLV_AMT;
     //wire demux
     wire [DATA_IN_MUX_WIDTH -1:0] demux_in;
@@ -41,7 +41,7 @@ module W_dsp_mst_channel #(
     //wire out
     wire   [DATA_WIDTH -1:0]                 sa_WDATA_o_demux [SLV_AMT -1 : 0];
     wire                                     sa_WLAST_o_demux [SLV_AMT -1: 0];
-    wire                                     sa_WVALID_o_demux [SLV_AMT -1: 0];
+    //wire                                     sa_WVALID_o_demux [SLV_AMT -1: 0];
     common_demux #(
         .DATA_WIDTH(DATA_IN_MUX_WIDTH),
         .OUT_AMT (SLV_AMT)
@@ -51,7 +51,7 @@ module W_dsp_mst_channel #(
         .data_o(demux_out)
     );
     //in out demux
-    assign demux_in = {m_WDATA_i, m_WLAST_i, m_WVALID_i};
+    assign demux_in = {m_WDATA_i, m_WLAST_i}; //xao m_AWVALID_i
     genvar idx;
     generate
         //tach out cua mux thanh cac phan cho tung slave
@@ -59,15 +59,15 @@ module W_dsp_mst_channel #(
             assign {
             sa_WDATA_o_demux[idx],
             sa_WLAST_o_demux[idx],
-            sa_WVALID_o_demux[idx]
+            //sa_WVALID_o_demux[idx]
             } = demux_out[DATA_IN_MUX_WIDTH*idx +: DATA_IN_MUX_WIDTH];
         end
         //gop cac loai data cho ra output
         for (idx = 0; idx < SLV_AMT;idx = idx +1) begin : W_SLV_OUT
             assign sa_WDATA_o   [DATA_WIDTH * idx +: DATA_WIDTH]        = sa_WDATA_o_demux [idx];
             assign sa_WLAST_o   [idx]                                   = sa_WLAST_o_demux [idx];
-            assign sa_WVALID_o  [idx]                                   = sa_WVALID_o_demux [idx];
+            //assign sa_WVALID_o  [idx]                                   = sa_WVALID_o_demux [idx];
         end
     endgenerate
-    assign m_WREADY_o = sa_WREADY_i [ctl_SLV_ID_i];
+    //assign m_WREADY_o = sa_WREADY_i [ctl_SLV_ID_i];
 endmodule

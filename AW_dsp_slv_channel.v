@@ -22,8 +22,8 @@ module AW_dsp_slv_channel #(
     input   [TRANS_DATA_LEN_W*MST_AMT-1:0]    ma_AWLEN_i,
     input   [TRANS_DATA_SIZE_W*MST_AMT-1:0]   ma_AWSIZE_i,
     input   [TRANS_QOS_W*MST_AMT-1:0]         ma_AWQOS_i,
-    input   [MST_AMT-1:0]                     ma_AWVALID_i,
-    output  [MST_AMT-1:0]                     ma_AWREADY_o,
+    //input   [MST_AMT-1:0]                     ma_AWVALID_i,
+    //output  [MST_AMT-1:0]                     ma_AWREADY_o,
 
     //--------------------------------------------------
     // Slave interface
@@ -34,8 +34,8 @@ module AW_dsp_slv_channel #(
     output  [TRANS_DATA_LEN_W-1:0]            s_AWLEN_o,
     output  [TRANS_DATA_SIZE_W-1:0]           s_AWSIZE_o,
     output  [TRANS_QOS_W-1:0]                 s_AWQOS_o,
-    output                                    s_AWVALID_o,
-    input                                     s_AWREADY_i,
+    //output                                    s_AWVALID_o,
+    //input                                     s_AWREADY_i,
 
     //--------------------------------------------------
     // Controller
@@ -53,8 +53,7 @@ module AW_dsp_slv_channel #(
         TRANS_BURST_W +
         TRANS_DATA_LEN_W +
         TRANS_DATA_SIZE_W +
-        TRANS_QOS_W+
-        1;
+        TRANS_QOS_W;
 
     //--------------------------------------------------
     // MUX
@@ -108,9 +107,9 @@ module AW_dsp_slv_channel #(
                 ma_AWQOS_i[
                     TRANS_QOS_W*idx +:
                     TRANS_QOS_W
-                ],
+                ]
 
-                ma_AWVALID_i[idx]
+                //ma_AWVALID_i[idx]
             };
 
         end
@@ -140,26 +139,26 @@ module AW_dsp_slv_channel #(
         s_AWBURST_o,
         s_AWLEN_o,
         s_AWSIZE_o,
-        s_AWQOS_o,
-        s_AWVALID_o
+        s_AWQOS_o
+        //s_AWVALID_o
     } = mux_out;
 
     //--------------------------------------------------
     // READY DEMUX
     //--------------------------------------------------
 
-    generate
+    // generate
 
-        for(idx=0; idx<MST_AMT; idx=idx+1)
-        begin : AW_READY_DEMUX
+    //     for(idx=0; idx<MST_AMT; idx=idx+1)
+    //     begin : AW_READY_DEMUX
 
-            assign ma_AWREADY_o[idx] =
-                (ctl_MST_ID_i == idx)
-                ? s_AWREADY_i
-                : 1'b0;
+    //         assign ma_AWREADY_o[idx] =
+    //             (ctl_MST_ID_i == idx)
+    //             ? s_AWREADY_i
+    //             : 1'b0;
 
-        end
+    //     end
 
-    endgenerate
+    // endgenerate
 
 endmodule
