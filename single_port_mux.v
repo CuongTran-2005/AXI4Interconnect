@@ -1,6 +1,6 @@
 module single_port_mux #(
     parameter SEL_WIDTH  = 2, 
-    parameter N          = 4, 
+    parameter N          = 2**SEL_WIDTH, 
     parameter DATA_WIDTH = 2  
 ) (
     input  wire [(N * DATA_WIDTH)-1:0] data_in,
