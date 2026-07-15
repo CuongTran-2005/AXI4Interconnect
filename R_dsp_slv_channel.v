@@ -14,8 +14,8 @@ module R_dsp_slv_channel #(
     input   [DATA_WIDTH-1:0]                        s_RDATA_i,
     input   [TRANS_WR_RESP_W-1:0]                   s_RRESP_i,
     input                                           s_RLAST_i,
-    input                                           s_RVALID_i,
-    output                                          s_RREADY_o,
+    // input                                           s_RVALID_i,
+    // output                                          s_RREADY_o,
 
     //--------------------------------------------------
     // Master arbiter interface
@@ -24,8 +24,8 @@ module R_dsp_slv_channel #(
     output  [DATA_WIDTH*MST_AMT-1:0]                ma_RDATA_o,
     output  [TRANS_WR_RESP_W*MST_AMT-1:0]           ma_RRESP_o,
     output  [MST_AMT-1:0]                           ma_RLAST_o,
-    output  [MST_AMT-1:0]                           ma_RVALID_o,
-    input   [MST_AMT-1:0]                           ma_RREADY_i,
+    // output  [MST_AMT-1:0]                           ma_RVALID_o,
+    // input   [MST_AMT-1:0]                           ma_RREADY_i,
 
     //--------------------------------------------------
     // Controller
@@ -41,8 +41,8 @@ module R_dsp_slv_channel #(
             TRANS_MST_ID_W +
             DATA_WIDTH +
             TRANS_WR_RESP_W +
-            1 +     // RLAST
-            1;      // RVALID
+            1      // RLAST
+            ;      // RVALID
 
     //--------------------------------------------------
     // DEMUX signals
@@ -60,8 +60,8 @@ module R_dsp_slv_channel #(
         s_RID_i,
         s_RDATA_i,
         s_RRESP_i,
-        s_RLAST_i,
-        s_RVALID_i
+        s_RLAST_i
+        //s_RVALID_i
     };
 
     //--------------------------------------------------
@@ -104,9 +104,9 @@ module R_dsp_slv_channel #(
                     TRANS_WR_RESP_W
                 ],
 
-                ma_RLAST_o[idx],
+                ma_RLAST_o[idx]
 
-                ma_RVALID_o[idx]
+                //ma_RVALID_o[idx]
 
             } = demux_out[
                     DATA_IN_DEMUX_WIDTH*idx +:
@@ -121,7 +121,7 @@ module R_dsp_slv_channel #(
     // READY mux
     //--------------------------------------------------
 
-    assign s_RREADY_o =
-        ma_RREADY_i[ctl_MST_ID_i];
+    // assign s_RREADY_o =
+    //     ma_RREADY_i[ctl_MST_ID_i];
 
 endmodule

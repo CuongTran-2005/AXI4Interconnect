@@ -11,16 +11,16 @@ module B_dsp_slv_channel #(
     //--------------------------------------------------
     input   [TRANS_MST_ID_W-1:0]                    s_BID_i,
     input   [TRANS_WR_RESP_W-1:0]                   s_BRESP_i,
-    input                                           s_BVALID_i,
-    output                                          s_BREADY_o,
+    // input                                           s_BVALID_i,
+    // output                                          s_BREADY_o,
 
     //--------------------------------------------------
     // Master arbiter interface
     //--------------------------------------------------
     output  [TRANS_MST_ID_W*MST_AMT-1:0]            ma_BID_o,
     output  [TRANS_WR_RESP_W*MST_AMT-1:0]           ma_BRESP_o,
-    output  [MST_AMT-1:0]                           ma_BVALID_o,
-    input   [MST_AMT-1:0]                           ma_BREADY_i,
+    // output  [MST_AMT-1:0]                           ma_BVALID_o,
+    // input   [MST_AMT-1:0]                           ma_BREADY_i,
 
     //--------------------------------------------------
     // Controller
@@ -34,8 +34,7 @@ module B_dsp_slv_channel #(
 
     localparam DATA_IN_DEMUX_WIDTH =
             TRANS_MST_ID_W +
-            TRANS_WR_RESP_W +
-            1;      // BVALID
+            TRANS_WR_RESP_W ;      // BVALID
 
     //--------------------------------------------------
     // DEMUX signals
@@ -51,8 +50,8 @@ module B_dsp_slv_channel #(
     assign demux_in =
     {
         s_BID_i,
-        s_BRESP_i,
-        s_BVALID_i
+        s_BRESP_i
+        //s_BVALID_i
     };
 
     //--------------------------------------------------
@@ -88,9 +87,9 @@ module B_dsp_slv_channel #(
                 ma_BRESP_o[
                     TRANS_WR_RESP_W*idx +:
                     TRANS_WR_RESP_W
-                ],
+                ]
 
-                ma_BVALID_o[idx]
+                //ma_BVALID_o[idx]
 
             } = demux_out[
                     DATA_IN_DEMUX_WIDTH*idx +:
@@ -105,7 +104,7 @@ module B_dsp_slv_channel #(
     // READY mux
     //--------------------------------------------------
 
-    assign s_BREADY_o =
-        ma_BREADY_i[ctl_MST_ID_i];
+    // assign s_BREADY_o =
+    //     ma_BREADY_i[ctl_MST_ID_i];
 
 endmodule
