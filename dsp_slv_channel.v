@@ -46,8 +46,8 @@ module dsp_slv_channel #(
     input  [MST_AMT -1 : 0]                 w_fifo_rd_en_i,
 
     //R/B ID
-    // output [TRANS_MST_ID_W-1:0]                 r_trans_mst_id, //bo
-    // output [TRANS_MST_ID_W-1:0]                 b_trans_mst_id,
+    //output [TRANS_MST_ID_W-1:0]                 r_trans_mst_id, 
+    //output [TRANS_MST_ID_W-1:0]                 b_trans_mst_id,
 	//fifo req
 	// output [MST_AMT-1:0]                        fifo_ar_req, //bo
     // output [MST_AMT-1:0]                        fifo_aw_req,

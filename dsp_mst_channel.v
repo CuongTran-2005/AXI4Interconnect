@@ -20,15 +20,18 @@ module dsp_mst_channel #(
 	//global signal
 	input                                   ACLK_i,
     input                                   ARESETn_i,
-	//control signal
+	//------------control signal-------------------
 	input [SLV_ID_W-1:0] 				  	ctl_slave_id_aw_i,
     input [SLV_ID_W-1:0] 				  	ctl_slave_id_w_i,
     input [SLV_ID_W-1:0] 				  	ctl_slave_id_b_i,
-	output [ADDR_WIDTH-1:0]           	    ctl_AWADDR_o,
+	//output [ADDR_WIDTH-1:0]           	    ctl_AWINFO_o,
 	 
     input [SLV_ID_W-1:0] 					ctl_slave_id_ar_i,
     input [SLV_ID_W-1:0] 					ctl_slave_id_r_i,
-	 output [ADDR_WIDTH-1:0]                ctl_ARADDR_o,
+	//output [ADDR_WIDTH-1:0]                 ctl_ARINFO_o,
+    //r, b last
+    // output                                  r_last_o;
+    // output                                  b_last_o;
 
     //fifo signal 
     output [SLV_AMT -1 : 0]                 r_fifo_full_o,
@@ -41,7 +44,7 @@ module dsp_mst_channel #(
     input  [SLV_AMT -1 : 0]                 b_fifo_wr_en_i,
     input  [SLV_AMT -1 : 0]                 b_fifo_rd_en_i,
 
-     //them emty va full cua cac fifo
+     
     //-----AR dsp_mst channel------
 	 //master side
 	input   [TRANS_MST_ID_W-1:0]                        m_ARID_i,
@@ -63,22 +66,22 @@ module dsp_mst_channel #(
     // input   [SLV_AMT -1:0]                              sa_ARREADY_i,
 	 //-----R dsp_mst channel------
 	 //master side
-	 output  [TRANS_MST_ID_W-1:0]    m_RID_o,
-    output  [DATA_WIDTH-1:0]        m_RDATA_o,
-    output  [TRANS_WR_RESP_W-1:0]   m_RRESP_o,
-    output                          m_RLAST_o,
+	output  [TRANS_MST_ID_W-1:0]                        m_RID_o,
+    output  [DATA_WIDTH-1:0]                            m_RDATA_o,
+    output  [TRANS_WR_RESP_W-1:0]                       m_RRESP_o,
+    output                                              m_RLAST_o,
     // output                          m_RVALID_o,
     // input                           m_RREADY_i,
 	 //slave side
-    input   [TRANS_MST_ID_W*SLV_AMT-1:0]  sa_RID_i,
-    input   [DATA_WIDTH*SLV_AMT-1:0]      sa_RDATA_i,
-    input   [TRANS_WR_RESP_W*SLV_AMT-1:0] sa_RRESP_i,
-    input   [SLV_AMT-1:0]                 sa_RLAST_i,
+    input   [TRANS_MST_ID_W*SLV_AMT-1:0]                sa_RID_i,
+    input   [DATA_WIDTH*SLV_AMT-1:0]                    sa_RDATA_i,
+    input   [TRANS_WR_RESP_W*SLV_AMT-1:0]               sa_RRESP_i,
+    input   [SLV_AMT-1:0]                               sa_RLAST_i,
     // input   [SLV_AMT-1:0]                 sa_RVALID_i,
     // output  [SLV_AMT-1:0]                 sa_RREADY_o,
 	 //-----AW dsp_mst channel -------
 	 // Master side
-	 input   [TRANS_MST_ID_W-1:0]                        m_AWID_i,
+	 input   [TRANS_MST_ID_W-1:0]                       m_AWID_i,
     input   [ADDR_WIDTH-1:0]                            m_AWADDR_i,
     input   [TRANS_BURST_W-1:0]             	        m_AWBURST_i,
     input   [TRANS_DATA_LEN_W-1:0]          	        m_AWLEN_i,
@@ -97,24 +100,24 @@ module dsp_mst_channel #(
     // input   [SLV_AMT -1:0]                              sa_AWREADY_i,
 	 //-----W dsp_mst channel -------
 	 // Master interface
-	 input   [DATA_WIDTH-1:0]                            m_WDATA_i,
+	input   [DATA_WIDTH-1:0]                            m_WDATA_i,
     input                                               m_WLAST_i,
     // input                                               m_WVALID_i,
     // output                                              m_WREADY_o,
     // Slave arbiter interface
-	 output   [DATA_WIDTH * SLV_AMT-1:0]                 sa_WDATA_o,
+	output   [DATA_WIDTH * SLV_AMT-1:0]                 sa_WDATA_o,
     output   [SLV_AMT -1:0]                             sa_WLAST_o,
     // output   [SLV_AMT-1:0]                              sa_WVALID_o,
     // input    [SLV_AMT -1:0]                             sa_WREADY_i,
 	 //----B dsp_mst channel --------
 	  // Master interface
-    output  [TRANS_MST_ID_W-1:0]    m_BID_o,
-    output  [TRANS_WR_RESP_W-1:0]   m_BRESP_o,
+    output  [TRANS_MST_ID_W-1:0]                        m_BID_o,
+    output  [TRANS_WR_RESP_W-1:0]                       m_BRESP_o,
     // output                          m_BVALID_o,
     // input                           m_BREADY_i,
     // Slave arbiter interface
-    input   [TRANS_MST_ID_W*SLV_AMT-1:0]  sa_BID_i,
-    input   [TRANS_WR_RESP_W*SLV_AMT-1:0] sa_BRESP_i
+    input   [TRANS_MST_ID_W*SLV_AMT-1:0]                sa_BID_i,
+    input   [TRANS_WR_RESP_W*SLV_AMT-1:0]               sa_BRESP_i
     // input   [SLV_AMT-1:0]                 sa_BVALID_i,
     // output  [SLV_AMT-1:0]                 sa_BREADY_o
 );
@@ -130,7 +133,9 @@ localparam B_FIFO_WIDTH =
             TRANS_MST_ID_W +
             TRANS_WR_RESP_W;
 
-//wire
+//rlast, blast to controler
+// assign r_last_o = m_RLAST_o;
+// assign b_last_o = m_BLAST_o;
 //AR channel
 AR_dsp_mst_channel #(
     .MST_AMT            (MST_AMT),
@@ -175,7 +180,7 @@ u_AR_dsp_mst_channel (
     //.sa_ARREADY_i   (sa_ARREADY_i),
 
     // Decoder interface
-    .ctl_ADDR_o     (ctl_ARADDR_o),
+    //.ctl_ADDR_o     (ctl_ARINFO_o),
     .ctl_SLV_ID_i   (ctl_slave_id_ar_i)
 );
 
@@ -222,7 +227,7 @@ u_AW_dsp_mst_channel (
     // .sa_AWREADY_i   (sa_AWREADY_i),
 
     // Decoder interface
-    .ctl_ADDR_o     (ctl_AWADDR_o),
+    //.ctl_ADDR_o     (ctl_AWINFO_o),
     .ctl_SLV_ID_i   (ctl_slave_id_aw_i)
 );
 

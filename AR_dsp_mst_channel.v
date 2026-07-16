@@ -37,7 +37,7 @@ module AR_dsp_mst_channel #(
     //output  [SLV_AMT -1:0]                              sa_ARVALID_o,
     //input   [SLV_AMT -1:0]                              sa_ARREADY_i,
     //control (decoder) interface
-    output  [ADDR_WIDTH-1:0]                            ctl_ADDR_o,
+    //output  [ADDR_WIDTH-1:0]                            ctl_ADDR_o,
     input   [SLV_ID_W -1:0]                             ctl_SLV_ID_i
 );
     //local parameter cho demux
@@ -89,6 +89,6 @@ module AR_dsp_mst_channel #(
             //assign sa_ARVALID_o [idx +: 1]                                      = sa_ARVALID_o_demux [idx];
         end
     endgenerate
-    assign ctl_ADDR_o = m_ARADDR_i;
+    //assign ctl_ADDR_o = m_ARADDR_i;
     //assign m_ARREADY_o = sa_ARREADY_i [ctl_SLV_ID_i];
 endmodule
