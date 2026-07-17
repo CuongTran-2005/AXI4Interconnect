@@ -98,7 +98,7 @@ module axi_datapath #(
     //=====================================================================
 
     //----------master dsp-----------
-	 input [SLV_ID_W * MST_AMT-1:0] 				  	            ctl_slave_id_aw_i,
+	input [SLV_ID_W * MST_AMT-1:0] 				  	            ctl_slave_id_aw_i,
     input [SLV_ID_W * MST_AMT-1:0] 				  	            ctl_slave_id_w_i,
     input [SLV_ID_W * MST_AMT-1:0] 				  	            ctl_slave_id_b_i,
     input [SLV_ID_W * MST_AMT-1:0] 					            ctl_slave_id_ar_i,
@@ -112,8 +112,8 @@ module axi_datapath #(
 
     //========signal for controler===============
     //AW, AR info for controler 
-    output [(ADDR_WIDTH + TRANS_MST_ID_W + TRANS_QOS_W) * MST_AMT-1:0]        ctl_AWINFO_o,
-	 output [(ADDR_WIDTH + TRANS_MST_ID_W + TRANS_QOS_W) * MST_AMT-1:0]        ctl_ARINFO_o,
+    output [(ADDR_WIDTH + TRANS_MST_ID_W + TRANS_QOS_W) * MST_AMT-1:0]        ctl_mst_AWINFO_o,
+	 output [(ADDR_WIDTH + TRANS_MST_ID_W + TRANS_QOS_W) * MST_AMT-1:0]        ctl_mst_ARINFO_o,
     //blast, rlast for controler
     output [MST_AMT -1:0]								        ctl_mst_wlast_o,
     output [MST_AMT -1:0]								        ctl_mst_rlast_o,
@@ -124,6 +124,9 @@ module axi_datapath #(
     //========signal for arbiter ================
     output [TRANS_MST_ID_W * MST_AMT -1:0]                      r_trans_slv_id_o,
     output [TRANS_MST_ID_W * MST_AMT -1:0]                      b_trans_slv_id_o,
+
+    output [(TRANS_QOS_W) * SLV_AMT-1:0]        ctl_slv_AWQOS_o,
+	output [(TRANS_QOS_W) * SLV_AMT-1:0]        ctl_slv_ARQOS_o,
     
     //========signal of fifo====================
     //fifo signal for master dsp
@@ -465,11 +468,11 @@ begin : GEN_MST_SIDE_SKID
         .dsp_BVALID_i  (mst_sk_BVALID[mst]),
         .dsp_BREADY_o  (mst_sk_BREADY[mst])
     );
-    assign ctl_AWINFO_o[(mst+1)*AxINFO-1 -: AxINFO]=   
+    assign ctl_mst_AWINFO_o[(mst+1)*AxINFO-1 -: AxINFO]=   
             {mst_AWADDR[(mst+1)*ADDR_WIDTH-1 -: ADDR_WIDTH],
             mst_AWID[(mst+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W], 
             mst_AWQOS[(mst+1)*TRANS_QOS_W-1 -: TRANS_QOS_W]};
-    assign ctl_ARINFO_o[(mst+1)*AxINFO-1 -: AxINFO]=   
+    assign ctl_mst_ARINFO_o[(mst+1)*AxINFO-1 -: AxINFO]=   
             {mst_ARADDR[(mst+1)*ADDR_WIDTH-1 -: ADDR_WIDTH],
             mst_ARID[(mst+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W], 
             mst_ARQOS[(mst+1)*TRANS_QOS_W-1 -: TRANS_QOS_W]};
@@ -980,7 +983,11 @@ begin : GEN_SLV_SKID
         .s_BVALID_i         (s_BVALID_i[slv]),
         .s_BREADY_o         (s_BREADY_o[slv])
     );
+    assign  ctl_slv_AWQOS_o[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W]=   
+            slv_AWQOS[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W];
 
+    assign  ctl_slv_ARQOS_o[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W]=   
+            slv_ARQOS[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W];
 end
 endgenerate
 endmodule
