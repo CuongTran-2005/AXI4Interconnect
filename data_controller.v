@@ -22,9 +22,9 @@ module data_controller #(
 	wire request;
 	wire [REQUESTER_NUM-1:0] grant_bus_buffer;
 	
-	/* assignement */
+	/* combinational */
 	assign request = |request_bus;
-	assign grant_bus = (grant_enable)?grant_bus_buffer:{REQUESTER_NUM{1'bZ}};
+	assign grant_bus = (grant_enable)?grant_bus_buffer:{REQUESTER_NUM{1'b0}};
 	
 	/* instantiation */
 	data_controller_main_fsm u_main_fsm(
