@@ -64,13 +64,13 @@ module controller # (
 	output wire [SLAVE_NUM-1:0] 						R_one_hot_grant_o,
 	
 	// fifo_write -> AW Channel
-	output wire 										AW_fifo_write_o,
+	output wire [SLAVE_NUM-1:0]							AW_fifo_write_o,
 	
 	// fifo_write -> W Channel
-	output wire 										W_fifo_write_o,
+	output wire [SLAVE_NUM-1:0]							W_fifo_write_o,
 	
 	// fifo_write -> AR Channel
-	output wire 										AR_fifo_write_o,
+	output wire [SLAVE_NUM-1:0]							AR_fifo_write_o,
 	
 	/*=======================master side=====================*/
 	/*--------------------------input------------------------*/
@@ -234,12 +234,28 @@ module controller # (
 	.out(w_fifo_full_mux_out)
 	);
 	
+	wire [SLAVE_NUM-1:0] aw_fifo_write_demux_out;
+	demux #(.SEL_WIDTH(SLAVE_ID_WIDTH), .DATA_WIDTH(1))
+	aw_fifo_write_demux(
+	.data_in(aw_decoder_fifo_write),
+	.sel(AW_slave_id_o),
+	.data_out(aw_fifo_write_demux_out)
+	);
+	
+	wire [SLAVE_NUM-1:0] w_fifo_write_demux_out;
+	demux #(.SEL_WIDTH(SLAVE_ID_WIDTH), .DATA_WIDTH(1))
+	w_fifo_write_demux(
+	.data_in(W_valid_i & W_ready_o),
+	.sel(W_slave_id_o),
+	.data_out(w_fifo_write_demux_out)
+	);
+	
 	assign AW_ready_o = ~b_fifo_full_mux_out & ~aw_fifo_full_mux_out & ~w_slave_id_fifo_full;
-	assign AW_fifo_write_o = aw_decoder_fifo_write;
+	assign AW_fifo_write_o = aw_fifo_write_demux_out;
 	assign AW_slave_id_o = aw_decoder_slave_id;
 	assign aw_decoder_handshake = AW_ready_o & AW_valid_i;
 	assign W_ready_o = ~w_fifo_full_mux_out;
-	assign W_fifo_write_o = W_last_i & W_ready_o;
+	assign W_fifo_write_o = w_fifo_write_demux_out;
 	assign w_slave_id_fifo_read = W_last_i & W_ready_o & W_valid_i;
 	
 	/*===========================READ=========================*/
@@ -327,8 +343,16 @@ module controller # (
 	.out(ar_fifo_full_mux_out)
 	);
 	
+	wire [SLAVE_NUM-1:0] ar_fifo_write_demux_out;
+	demux #(.SEL_WIDTH(SLAVE_ID_WIDTH), .DATA_WIDTH(1))
+	ar_fifo_write_demux(
+	.data_in(ar_decoder_fifo_write),
+	.sel(AR_slave_id_o),
+	.data_out(ar_fifo_write_demux_out)
+	);
+	
 	assign AR_ready_o = ~r_fifo_full_mux_out & ~ar_fifo_full_mux_out;
-	assign AR_fifo_write_o = ar_decoder_fifo_write;
+	assign AR_fifo_write_o = ar_fifo_write_demux_out;
 	assign AR_slave_id_o = ar_decoder_slave_id;
 	assign ar_decoder_handshake = AR_ready_o & AR_valid_i;
 endmodule

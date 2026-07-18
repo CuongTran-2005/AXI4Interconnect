@@ -63,7 +63,6 @@ set_global_assignment -name VERILOG_FILE round_robin_arbiter.v
 set_global_assignment -name VERILOG_FILE demux.v
 set_global_assignment -name VERILOG_FILE single_port_mux.v
 set_global_assignment -name VERILOG_FILE axi4_data_channel_controller.v
-set_global_assignment -name VERILOG_FILE ../../../AXI4_interconnect/tb_axi_interconnect.v
 set_global_assignment -name VERILOG_FILE axi_slave_w.v
 set_global_assignment -name VERILOG_FILE axi_slave_r.v
 set_global_assignment -name VERILOG_FILE axi_slave_if.v
