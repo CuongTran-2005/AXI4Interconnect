@@ -12,7 +12,7 @@ module axi_datapath #(
     parameter                       TRANS_DATA_LEN_W    = 8,
     parameter                       TRANS_DATA_SIZE_W   = 3,
     parameter                       TRANS_WR_RESP_W     = 2,
-    parameter                       TRANS_QOS_W         = 16,
+    parameter                       TRANS_QOS_W         = 4,
 	parameter                       SLV_ID_MSB_IDX      = ADDR_WIDTH - 1,
     parameter                       SLV_ID_LSB_IDX      = ADDR_WIDTH - $clog2(SLV_AMT),
     parameter                       FIFO_DEPTH          = 16
@@ -125,8 +125,8 @@ module axi_datapath #(
     output [TRANS_MST_ID_W * MST_AMT -1:0]                      r_trans_slv_id_o,
     output [TRANS_MST_ID_W * MST_AMT -1:0]                      b_trans_slv_id_o,
 
-    output [(TRANS_QOS_W) * SLV_AMT-1:0]        ctl_slv_AWQOS_o,
-	output [(TRANS_QOS_W) * SLV_AMT-1:0]        ctl_slv_ARQOS_o,
+    output [(TRANS_QOS_W * MST_AMT) * SLV_AMT-1:0]        ctl_slv_AWQOS_o,
+	output [(TRANS_QOS_W * MST_AMT) * SLV_AMT-1:0]        ctl_slv_ARQOS_o,
     
     //========signal of fifo====================
     //fifo signal for master dsp
@@ -983,11 +983,11 @@ begin : GEN_SLV_SKID
         .s_BVALID_i         (s_BVALID_i[slv]),
         .s_BREADY_o         (s_BREADY_o[slv])
     );
-    assign  ctl_slv_AWQOS_o[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W]=   
-            slv_AWQOS[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W];
-
-    assign  ctl_slv_ARQOS_o[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W]=   
-            slv_ARQOS[(slv+1)*TRANS_QOS_W-1 -: TRANS_QOS_W];
+    
 end
 endgenerate
+
+assign  ctl_slv_AWQOS_o= xbar_to_slv_AWQOS;
+
+assign  ctl_slv_ARQOS_o= xbar_to_slv_ARQOS;
 endmodule

@@ -4,7 +4,7 @@ module controller # (
 	parameter SLAVE_NUM 					= 4,
     parameter SLAVE_ID_WIDTH    			= $clog2(SLAVE_NUM), // default SLAVE_ID_WIDTH = 2,
     parameter ADDR_WIDTH        			= 32,
-	parameter TRANSACTION_ID_WIDTH 			= 2,
+	parameter TRANSACTION_ID_WIDTH 			= 4,
 	parameter QOS_WIDTH 					= 4,
 	parameter AXINFO_WIDTH 					= ADDR_WIDTH + TRANSACTION_ID_WIDTH + QOS_WIDTH,
 	parameter MAX_OUTSTANDING_TRANSACTION 	= 8
