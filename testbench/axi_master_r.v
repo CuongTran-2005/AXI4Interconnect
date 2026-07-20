@@ -16,6 +16,7 @@ module axi_master_r #(
     input      [1:0]                    set_ARBURST_i,
     input      [7:0]                    set_ARLEN_i,
     input      [2:0]                    set_ARSIZE_i,
+    input      [3:0]                    set_ARQOS_i,
 
 //================== REQUEST RAM  ==================//
 
@@ -37,6 +38,7 @@ module axi_master_r #(
     output     [1:0]                    m_ARBURST_o,
     output     [7:0]                    m_ARLEN_o,
     output     [2:0]                    m_ARSIZE_o,
+    output     [3:0]                    m_ARQOS_o,
     input                               m_ARREADY_i,
 
 //================ READ DATA =====================//
@@ -64,6 +66,7 @@ module axi_master_r #(
     reg  [1:0]                          reg_set_ARBURST_i;
     reg  [7:0]                          reg_set_ARLEN_i;
     reg  [2:0]                          reg_set_ARSIZE_i;
+    reg  [3:0]                          reg_set_ARQOS_i;
 
     //WSTRB
     wire [ADDR_WIDTH/8-1:0]             bytes_per_beat = {{(ADDR_WIDTH/8-1){1'b0}},1'b1} << set_ARSIZE_i;
@@ -152,6 +155,7 @@ module axi_master_r #(
 							  reg_set_ARBURST_i <= set_ARBURST_i;
 							  reg_set_ARLEN_i <= set_ARLEN_i;
 							  reg_set_ARSIZE_i <=set_ARSIZE_i;
+                              reg_set_ARQOS_i <= set_ARQOS_i;
 							end
 					 end
 					 
@@ -213,6 +217,7 @@ module axi_master_r #(
     assign m_ARBURST_o = reg_set_ARBURST_i;
     assign m_ARLEN_o   = reg_set_ARLEN_i;
     assign m_ARSIZE_o  = reg_set_ARSIZE_i;
+    assign m_ARQOS_o   = reg_set_ARQOS_i;
     assign m_ARID_o    = reg_m_ARID_o;
 
     // READ DATA

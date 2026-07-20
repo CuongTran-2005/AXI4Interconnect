@@ -1,0 +1,46 @@
+# ==============================================================================
+# ModelSim / QuestaSim .gitignore
+# ==============================================================================
+
+# --- Compiled Libraries & Metadata ---
+# Default library directories where compiled HDL design units live
+work/
+msim/
+*_lib/
+_info
+
+# --- Simulation & Waveform Databases ---
+# Waveform log files generated during simulation runs
+*.wlf
+vsim.wlf
+*.asdb
+
+# --- Logs & Transcripts ---
+# Console transcripts and run logs
+transcript
+*.log
+vsim.log
+
+# --- Coverage Data ---
+# Unified Coverage Database (UCDB) files and generated reports
+*.ucdb
+covhtmlreport/
+covhtml/
+
+# --- Temporary & Intermediate Compile Files ---
+_vmake
+*.mti
+*.mti_ver*
+*.cr.mti
+*.dbg
+vsim.dbg
+*.vstf
+
+# --- Local Project / Configuration Files ---
+# Uncomment the line below if you want to ignore local GUI project files 
+# (recommended if using Tcl scripts or Makefiles for builds):
+*.mpf
+
+# Uncomment the line below if modelsim.ini is auto-generated locally 
+# and not customized/tracked for the project:
+modelsim.ini

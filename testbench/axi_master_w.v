@@ -2,7 +2,7 @@ module axi_master_w #(
     parameter ID_WIDTH   = 4,
     parameter ADDR_WIDTH = 32,    //toi da tuy vao so luong device va memory cua tung device
     parameter DATA_WIDTH = 32,     //toi da 1024
-	 parameter RAM_ADDR_WIDTH = 7
+	parameter RAM_ADDR_WIDTH = 7
 )(
     input                               ACLK_i,
     input                               ARESETn_i,
@@ -10,11 +10,12 @@ module axi_master_w #(
 //==================== CONTROL COMMAND ===================//
 
     input                               WriteTrans_EN_i,
-    input      [RAM_ADDR_WIDTH-1:0]     w_set_addr_memory,  // chon dia chi muon gui cho slave
-    input      [ADDR_WIDTH-1:0]         set_AWADDR_i,
-    input      [1:0]                    set_AWBURST_i,
-    input      [7:0]                    set_AWLEN_i,
-    input      [2:0]                    set_AWSIZE_i,
+    input      	[RAM_ADDR_WIDTH-1:0]     w_set_addr_memory,  // chon dia chi muon gui cho slave
+    input      	[ADDR_WIDTH-1:0]         set_AWADDR_i,
+    input      	[1:0]                    set_AWBURST_i,
+    input      	[7:0]                    set_AWLEN_i,
+    input      	[2:0]                    set_AWSIZE_i,
+	input	   	[3:0]					set_AWQOS_i,
 
 //================== REQUEST RAM ==================//
 
@@ -22,20 +23,21 @@ module axi_master_w #(
     output                              w_busy,
     input                               w_ram_access,
 
-    output     [RAM_ADDR_WIDTH-1:0]     ram_address,       //RAM
-    output reg [DATA_WIDTH-1:0]         ram_data_in,
-    output                              ram_wren,
-    input      [DATA_WIDTH-1:0]         ram_data_out,
-    output     [DATA_WIDTH/8-1:0]       ram_strobe,   //chua giai quyet strobe
+    output     	[RAM_ADDR_WIDTH-1:0]     ram_address,       //RAM
+    output reg 	[DATA_WIDTH-1:0]         ram_data_in,
+    output                               ram_wren,
+    input      	[DATA_WIDTH-1:0]         ram_data_out,
+    output     	[DATA_WIDTH/8-1:0]       ram_strobe,   //chua giai quyet strobe
 
 //================ WRITE ADDRESS =================//
 
     output                              m_AWVALID_o,
-    output     [ID_WIDTH-1:0]           m_AWID_o,
-    output     [ADDR_WIDTH-1:0]         m_AWADDR_o,
-    output     [1:0]                    m_AWBURST_o,
-    output     [7:0]                    m_AWLEN_o,
-    output     [2:0]                    m_AWSIZE_o,
+    output     	[ID_WIDTH-1:0]           m_AWID_o,
+    output     	[ADDR_WIDTH-1:0]         m_AWADDR_o,
+    output     	[1:0]                    m_AWBURST_o,
+    output     	[7:0]                    m_AWLEN_o,
+    output     	[2:0]                    m_AWSIZE_o,
+	output		[3:0]                   m_AWQOS_o,
     input                               m_AWREADY_i,
 
 //================ WRITE DATA ====================//
@@ -68,6 +70,7 @@ module axi_master_w #(
     reg  [1:0]                          reg_set_AWBURST_i;
     reg  [7:0]                          reg_set_AWLEN_i;
     reg  [2:0]                          reg_set_AWSIZE_i;
+    reg  [3:0]                          reg_set_AWQOS_i;
 
     //Strobe
     wire [ADDR_WIDTH/8-1:0]             bytes_per_beat = {{(ADDR_WIDTH/8-1){1'b0}},1'b1} << set_AWSIZE_i;
@@ -159,6 +162,7 @@ module axi_master_w #(
                         reg_set_AWBURST_i <= set_AWBURST_i;
                         reg_set_AWLEN_i <= set_AWLEN_i;
                         reg_set_AWSIZE_i <= set_AWSIZE_i;
+                        reg_set_AWQOS_i <= set_AWQOS_i;
                     end
                 AW: ;
                     /*if (m_AWVALID_o && m_AWREADY_i) begin
@@ -213,6 +217,7 @@ module axi_master_w #(
     assign m_AWBURST_o = reg_set_AWBURST_i;
     assign m_AWLEN_o   = reg_set_AWLEN_i;
     assign m_AWSIZE_o  = reg_set_AWSIZE_i;
+    assign m_AWQOS_o   = reg_set_AWQOS_i;  
     assign m_AWID_o    = reg_m_AWID_o;
 
     // WRITE DATA
