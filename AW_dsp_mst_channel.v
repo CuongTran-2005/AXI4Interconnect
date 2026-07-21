@@ -76,7 +76,7 @@ module AW_dsp_mst_channel #(
             sa_AWBURST_o_demux[idx],
             sa_AWLEN_o_demux[idx],
             sa_AWSIZE_o_demux[idx],
-            sa_AWQOS_o_demux[idx],
+            sa_AWQOS_o_demux[idx]
             //sa_AWVALID_o_demux[idx]
             } = demux_out[DATA_IN_MUX_WIDTH*idx +: DATA_IN_MUX_WIDTH];
         end

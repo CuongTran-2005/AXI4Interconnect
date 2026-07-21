@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "Cyclone II"
 set_global_assignment -name DEVICE EP2C35F672C6
-set_global_assignment -name TOP_LEVEL_ENTITY axi4_interconnect
+set_global_assignment -name TOP_LEVEL_ENTITY axi_datapath
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "16:57:19  JUNE 23, 2026"
 set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"

@@ -58,7 +58,7 @@ module W_dsp_mst_channel #(
         for (idx = 0; idx < SLV_AMT;idx = idx +1) begin : W_DEMUX_SEPARATION
             assign {
             sa_WDATA_o_demux[idx],
-            sa_WLAST_o_demux[idx],
+            sa_WLAST_o_demux[idx]
             //sa_WVALID_o_demux[idx]
             } = demux_out[DATA_IN_MUX_WIDTH*idx +: DATA_IN_MUX_WIDTH];
         end
