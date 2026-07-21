@@ -205,7 +205,7 @@ module arbiter_top #(
 	// ar read demux
 	wire 					ar_fifo_read;
 	wire [MASTER_NUM-1:0] 	ar_fifo_read_demux_out;
-	assign ar_fifo_read = aw_handshake;
+	assign ar_fifo_read = ar_handshake;
 	demux #(.SEL_WIDTH(MASTER_ID_WIDTH), .DATA_WIDTH(1))
 	ar_fifo_read_demux(
 	.data_in(ar_fifo_read),

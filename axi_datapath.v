@@ -199,39 +199,7 @@ localparam AxINFO = ADDR_WIDTH + TRANS_MST_ID_W + TRANS_QOS_W;
 //assign ctl_mst_aw_qos_o = mst_AWQOS;
 //valid and ready signal master skid buffer, master dsp, slave skidbuffer, slave dsp <-> controler and arbiter 
 //master skid buffer <-> controler and arbiter
-assign ctl_mst_sk_aw_valid_o = mst_sk_AWVALID;
-assign ctl_mst_sk_ar_valid_o = mst_sk_ARVALID;
-assign ctl_mst_sk_w_valid_o = mst_sk_WVALID;
-assign mst_sk_RVALID = ctl_mst_sk_r_valid_i;
-assign mst_sk_BVALID = ctl_mst_sk_b_valid_i;
 
-assign mst_sk_AWREADY = ctl_mst_sk_aw_ready_i;
-assign mst_sk_ARREADY = ctl_mst_sk_ar_ready_i;
-assign mst_sk_WREADY = ctl_mst_sk_w_ready_i;
-assign ctl_mst_sk_r_ready_o = mst_sk_RREADY;
-assign ctl_mst_sk_b_ready_o = mst_sk_BREADY;
-
-//slave skid buffer <-> controler and arbiter
-assign slv_sk_AWVALID = ctl_slv_sk_aw_valid_i;
-assign slv_sk_ARVALID = ctl_slv_sk_ar_valid_i;
-assign slv_sk_WVALID = ctl_slv_sk_w_valid_i;
-assign ctl_slv_sk_r_valid_o = slv_sk_RVALID;
-assign ctl_slv_sk_b_valid_o = slv_sk_BVALID;
-
-assign ctl_slv_sk_aw_ready_o = slv_sk_AWREADY;
-assign ctl_slv_sk_ar_ready_o = slv_sk_ARREADY;
-assign ctl_slv_sk_w_ready_o = slv_sk_WREADY;
-assign slv_sk_RREADY = ctl_slv_sk_r_ready_i;
-assign slv_sk_BREADY = ctl_slv_sk_b_ready_i;
-//output to controler
-assign ctl_mst_wlast_o = mst_WLAST;
-assign ctl_mst_rlast_o = mst_RLAST;
-
-assign r_trans_mst_id_o = mst_RID;
-assign b_trans_mst_id_o = mst_BID;
-//output to arbiter
-assign r_trans_slv_id_o = slv_RID;
-assign b_trans_slv_id_o = slv_BID;
 
 //wire master side <-> skid buffer 
 //==========================================================
@@ -356,6 +324,41 @@ wire [TRANS_MST_ID_W*SLV_AMT-1:0]        slv_BID;
 wire [TRANS_WR_RESP_W*SLV_AMT-1:0]       slv_BRESP;
 wire [SLV_AMT-1:0]                       slv_sk_BVALID;
 wire [SLV_AMT-1:0]                       slv_sk_BREADY;
+
+assign ctl_mst_sk_aw_valid_o = mst_sk_AWVALID;
+assign ctl_mst_sk_ar_valid_o = mst_sk_ARVALID;
+assign ctl_mst_sk_w_valid_o = mst_sk_WVALID;
+assign mst_sk_RVALID = ctl_mst_sk_r_valid_i;
+assign mst_sk_BVALID = ctl_mst_sk_b_valid_i;
+
+assign mst_sk_AWREADY = ctl_mst_sk_aw_ready_i;
+assign mst_sk_ARREADY = ctl_mst_sk_ar_ready_i;
+assign mst_sk_WREADY = ctl_mst_sk_w_ready_i;
+assign ctl_mst_sk_r_ready_o = mst_sk_RREADY;
+assign ctl_mst_sk_b_ready_o = mst_sk_BREADY;
+
+//slave skid buffer <-> controler and arbiter
+assign slv_sk_AWVALID = ctl_slv_sk_aw_valid_i;
+assign slv_sk_ARVALID = ctl_slv_sk_ar_valid_i;
+assign slv_sk_WVALID = ctl_slv_sk_w_valid_i;
+assign ctl_slv_sk_r_valid_o = slv_sk_RVALID;
+assign ctl_slv_sk_b_valid_o = slv_sk_BVALID;
+
+assign ctl_slv_sk_aw_ready_o = slv_sk_AWREADY;
+assign ctl_slv_sk_ar_ready_o = slv_sk_ARREADY;
+assign ctl_slv_sk_w_ready_o = slv_sk_WREADY;
+assign slv_sk_RREADY = ctl_slv_sk_r_ready_i;
+assign slv_sk_BREADY = ctl_slv_sk_b_ready_i;
+//output to controler
+assign ctl_mst_wlast_o = mst_WLAST;
+assign ctl_mst_rlast_o = mst_RLAST;
+
+assign r_trans_mst_id_o = mst_RID;
+assign b_trans_mst_id_o = mst_BID;
+//output to arbiter
+assign r_trans_slv_id_o = slv_RID;
+assign b_trans_slv_id_o = slv_BID;
+
 
 //==========================================================
 // Master Side Skid Buffer
