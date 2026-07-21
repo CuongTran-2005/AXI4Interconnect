@@ -12,6 +12,7 @@ module axi_master_r #(
 
     input                               ReadTrans_EN_i,
     input      [RAM_ADDR_WIDTH-1:0]     r_set_addr_memory,   //chon dia chi lua gia tri tu slave tra ve
+    input      [ID_WIDTH-1:0]           set_ARID_i,
     input      [ADDR_WIDTH-1:0]         set_ARADDR_i,
     input      [1:0]                    set_ARBURST_i,
     input      [7:0]                    set_ARLEN_i,
@@ -33,7 +34,7 @@ module axi_master_r #(
 //================ READ ADDRESS ==================//
 
     output                              m_ARVALID_o,
-    output     [ID_WIDTH-1:0]           m_ARID_o,          //chua dung
+    output     [ID_WIDTH-1:0]           m_ARID_o,          
     output     [ADDR_WIDTH-1:0]         m_ARADDR_o,
     output     [1:0]                    m_ARBURST_o,
     output     [7:0]                    m_ARLEN_o,
@@ -57,8 +58,6 @@ module axi_master_r #(
     reg [RAM_ADDR_WIDTH-1:0]            mem_ptr_r;        //dia chi de lua vao ram noi
     reg [7:0]                           burst_cnt_r;
     reg [2:0]                           state_r, next_state_r;
-	 
-	 reg [ID_WIDTH-1:0]           		 reg_m_ARID_o;    //gia tri arid
 
     wire [7:0]                          beat_size_r = (8'd1 << set_ARSIZE_i);
 
@@ -67,6 +66,7 @@ module axi_master_r #(
     reg  [7:0]                          reg_set_ARLEN_i;
     reg  [2:0]                          reg_set_ARSIZE_i;
     reg  [3:0]                          reg_set_ARQOS_i;
+    reg  [ID_WIDTH-1:0]                 reg_set_ARID_i;
 
     //WSTRB
     wire [ADDR_WIDTH/8-1:0]             bytes_per_beat = {{(ADDR_WIDTH/8-1){1'b0}},1'b1} << set_ARSIZE_i;
@@ -151,6 +151,7 @@ module axi_master_r #(
 							if (next_state_r == AR) begin
 							  mem_ptr_r <= r_set_addr_memory;         //chon dia chi muon nhan du lieu tu slave
 							  burst_cnt_r <= 0;							//dem so burst
+                              reg_set_ARID_i <= set_ARID_i;
 							  reg_set_ARADDR_i <= set_ARADDR_i;
 							  reg_set_ARBURST_i <= set_ARBURST_i;
 							  reg_set_ARLEN_i <= set_ARLEN_i;
@@ -187,16 +188,6 @@ module axi_master_r #(
             endcase
         end
     end
-	 	 //================ ARID =================//
-	 always @(posedge ACLK_i or negedge ARESETn_i)
-		begin
-			 if(!ARESETn_i)
-				  reg_m_ARID_o <= 0;
-
-			 else if(ReadTrans_EN_i)
-				  reg_m_ARID_o <= reg_m_ARID_o + 1'b1;
-		end
-
 
     //================ OUTPUT =================//
 
@@ -218,7 +209,7 @@ module axi_master_r #(
     assign m_ARLEN_o   = reg_set_ARLEN_i;
     assign m_ARSIZE_o  = reg_set_ARSIZE_i;
     assign m_ARQOS_o   = reg_set_ARQOS_i;
-    assign m_ARID_o    = reg_m_ARID_o;
+    assign m_ARID_o    = reg_set_ARID_i;
 
     // READ DATA
     assign m_RREADY_o = (state_r == RDATA);

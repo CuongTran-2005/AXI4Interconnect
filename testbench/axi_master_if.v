@@ -24,6 +24,7 @@ module axi_master_if #(
     input  [1:0]                set_ARBURST_i,
     input  [7:0]                set_ARLEN_i,
     input  [2:0]                set_ARSIZE_i,
+    input  [3:0]                set_ARQOS_i,
     
     // Transaction WRITE	
     input                       WriteTrans_EN_i,	
@@ -32,6 +33,7 @@ module axi_master_if #(
     input  [1:0]                set_AWBURST_i,
     input  [7:0]                set_AWLEN_i,
     input  [2:0]                set_AWSIZE_i,
+    input  [3:0]                set_AWQOS_i,
 	   
     //================ WRITE ADDRESS =================//
     output                      m_AWVALID_o,
@@ -40,6 +42,7 @@ module axi_master_if #(
     output [1:0]                m_AWBURST_o,
     output [7:0]                m_AWLEN_o,
     output [2:0]                m_AWSIZE_o,
+    output                      m_AWQOS_o,
     input                       m_AWREADY_i,
 
     //================ WRITE DATA ====================//
@@ -61,6 +64,7 @@ module axi_master_if #(
     output [1:0]                m_ARBURST_o,
     output [7:0]                m_ARLEN_o,
     output [2:0]                m_ARSIZE_o,
+    output [3:0]                m_ARQOS_o,
     input                       m_ARREADY_i,
 
     //================ READ DATA =====================//
@@ -166,6 +170,7 @@ module axi_master_if #(
         .set_AWBURST_i(set_AWBURST_i),
         .set_AWLEN_i(set_AWLEN_i),
         .set_AWSIZE_i(set_AWSIZE_i),
+        .set_AWQOS_i(set_AWQOS_i),
         
         .ram_address(w_ram_address),
         .ram_data_in(w_ram_data_in),
@@ -179,6 +184,7 @@ module axi_master_if #(
         .m_AWBURST_o(m_AWBURST_o),
         .m_AWLEN_o(m_AWLEN_o),
         .m_AWSIZE_o(m_AWSIZE_o),
+        .m_AWQOS_o(m_AWQOS_o),
         .m_AWREADY_i(m_AWREADY_i),
         
         .m_WVALID_o(m_WVALID_o),
@@ -212,6 +218,7 @@ module axi_master_if #(
         .set_ARBURST_i(set_ARBURST_i),
         .set_ARLEN_i(set_ARLEN_i),
         .set_ARSIZE_i(set_ARSIZE_i),
+        .set_ARQOS_i(set_ARQOS_i),
         
         .ram_address(r_ram_address),
         .ram_data_in(r_ram_data_in),
@@ -225,6 +232,7 @@ module axi_master_if #(
         .m_ARBURST_o(m_ARBURST_o),
         .m_ARLEN_o(m_ARLEN_o),
         .m_ARSIZE_o(m_ARSIZE_o),
+        .m_ARQOS_o(m_ARQOS_o),
         .m_ARREADY_i(m_ARREADY_i),
         
         .m_RVALID_i(m_RVALID_i),

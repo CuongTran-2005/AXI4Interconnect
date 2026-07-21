@@ -11,6 +11,7 @@ module axi_master_w #(
 
     input                               WriteTrans_EN_i,
     input      	[RAM_ADDR_WIDTH-1:0]     w_set_addr_memory,  // chon dia chi muon gui cho slave
+    input       [ID_WIDTH-1:0]           set_AWID_i,
     input      	[ADDR_WIDTH-1:0]         set_AWADDR_i,
     input      	[1:0]                    set_AWBURST_i,
     input      	[7:0]                    set_AWLEN_i,
@@ -62,10 +63,10 @@ module axi_master_w #(
     reg [7:0]                           burst_cnt_w;
     reg [2:0]                           state_w, next_state_w;
 	 
-	 reg [ID_WIDTH-1:0]           		 reg_m_AWID_o;
 
     wire [7:0]                          beat_size_w = (8'd1 << set_AWSIZE_i);
 
+    reg  [ID_WIDTH-1:0]                 reg_set_AWID_i;
     reg  [ADDR_WIDTH-1:0]               reg_set_AWADDR_i;
     reg  [1:0]                          reg_set_AWBURST_i;
     reg  [7:0]                          reg_set_AWLEN_i;
@@ -158,6 +159,7 @@ module axi_master_w #(
                         // Latch toàn bộ các giá trị điều khiển trước khi vào AW
                         mem_ptr_w <= w_set_addr_memory;
                         burst_cnt_w <= 0;
+                        reg_set_AWID_i <= set_AWID_i;
                         reg_set_AWADDR_i <= set_AWADDR_i;
                         reg_set_AWBURST_i <= set_AWBURST_i;
                         reg_set_AWLEN_i <= set_AWLEN_i;
@@ -187,15 +189,6 @@ module axi_master_w #(
             endcase
         end
     end
-	 //================ AWID =================//
-	 always @(posedge ACLK_i or negedge ARESETn_i)
-		begin
-			 if(!ARESETn_i)
-				  reg_m_AWID_o <= 0;
-
-			 else if(WriteTrans_EN_i)
-				  reg_m_AWID_o <= reg_m_AWID_o + 1'b1;
-		end
 
     //================ OUTPUT =================//
 
@@ -218,7 +211,7 @@ module axi_master_w #(
     assign m_AWLEN_o   = reg_set_AWLEN_i;
     assign m_AWSIZE_o  = reg_set_AWSIZE_i;
     assign m_AWQOS_o   = reg_set_AWQOS_i;  
-    assign m_AWID_o    = reg_m_AWID_o;
+    assign m_AWID_o    = reg_set_AWID_i;
 
     // WRITE DATA
     assign m_WVALID_o = (state_w == WDATA);

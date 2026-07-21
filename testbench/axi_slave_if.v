@@ -23,12 +23,12 @@ module axi_slave_if #(
     input  [7:0]                s_AWLEN_i,
     input  [1:0]                s_AWBURST_i,
     input  [2:0]                s_AWSIZE_i,
+    input  [3:0]                s_AWQOS_i,
     output                      s_AWREADY_o,
 
     //================ WRITE DATA CHANNEL ======================//
     input                       s_WVALID_i,
     input  [DATA_WIDTH-1:0]     s_WDATA_i,
-    input  [DATA_WIDTH/8-1:0]   s_WSTRB_i,   // Đã bổ sung Strobe
     input                       s_WLAST_i,
     output                      s_WREADY_o,
 
@@ -45,6 +45,7 @@ module axi_slave_if #(
     input  [7:0]                s_ARLEN_i,
     input  [1:0]                s_ARBURST_i,
     input  [2:0]                s_ARSIZE_i,    
+    input  [2:0]                s_ARQOS_i,
     output                      s_ARREADY_o,
 
     //================ READ DATA CHANNEL =======================//
@@ -97,7 +98,7 @@ module axi_slave_if #(
         .ACLK_i(ACLK_i), .ARESETn_i(ARESETn_i),
         .w_ram_access(w_ram_access), .w_req(w_req), .w_busy(w_busy),
         .ram_address(w_ram_addr), .ram_data_in(w_ram_din), .ram_wren(w_ram_we), .ram_strobe(w_strobe), .ram_data_out(ram_dout),
-        .s_AWVALID_i(s_AWVALID_i), .s_AWID_i(s_AWID_i), .s_AWADDR_i(s_AWADDR_i), .s_AWLEN_i(s_AWLEN_i), .s_AWBURST_i(s_AWBURST_i), .s_AWSIZE_i(s_AWSIZE_i), .s_AWREADY_o(s_AWREADY_o),
+        .s_AWVALID_i(s_AWVALID_i), .s_AWID_i(s_AWID_i), .s_AWADDR_i(s_AWADDR_i), .s_AWLEN_i(s_AWLEN_i), .s_AWBURST_i(s_AWBURST_i), .s_AWSIZE_i(s_AWSIZE_i), .s_AWQOS_i(s_AWQOS_i), .s_AWREADY_o(s_AWREADY_o),
         .s_WVALID_i(s_WVALID_i), .s_WDATA_i(s_WDATA_i), .s_WSTRB_i(s_WSTRB_i), .s_WLAST_i(s_WLAST_i), .s_WREADY_o(s_WREADY_o),
         .s_BVALID_o(s_BVALID_o), .s_BID_o(s_BID_o), .s_BRESP_o(s_BRESP_o), .s_BREADY_i(s_BREADY_i)
     );
@@ -109,8 +110,8 @@ module axi_slave_if #(
         .ACLK_i(ACLK_i), .ARESETn_i(ARESETn_i),
         .r_ram_access(r_ram_access), .r_req(r_req), .r_busy(r_busy),
         .ram_address(r_ram_addr), .ram_data_in(r_ram_din), .ram_wren(r_ram_we), .ram_strobe(r_strobe), .ram_data_out(ram_dout),
-        .s_ARVALID_i(s_ARVALID_i), .s_ARID_i(s_ARID_i), .s_ARADDR_i(s_ARADDR_i), .s_ARLEN_i(s_ARLEN_i), .s_ARBURST_i(s_ARBURST_i), .s_ARSIZE_i(s_ARSIZE_i), .s_ARREADY_o(s_ARREADY_o),
-        .s_RVALID_o(s_RVALID_o), .s_RLAST_o(s_RLAST_o), .s_RID_o(s_RID_o), .s_RDATA_o(s_RDATA_o), .s_RRESP_o(s_RRESP_o), .s_RREADY_i(s_RREADY_i)
+        .s_ARVALID_i(s_ARVALID_i), .s_ARID_i(s_ARID_i), .s_ARADDR_i(s_ARADDR_i), .s_ARLEN_i(s_ARLEN_i), .s_ARBURST_i(s_ARBURST_i), .s_ARSIZE_i(s_ARSIZE_i), .s_ARQOS_i(s_ARQOS_i), .s_ARREADY_o(s_ARREADY_o),
+        .s_RVALID_o(s_RVALID_o), .s_RLAST_o(s_RLAST_o), .s_RID_o(s_RID_o), .s_RDATA_o(s_RDATA_o), .s_RRESP_o(s_RRESP_o), .s_RREADY_i(s_RREADY_i),
     );
 
     // 4. RAM MUX
