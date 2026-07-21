@@ -2,7 +2,7 @@ module axi_slave_w #(
     parameter ID_WIDTH   = 4,
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
-	 parameter RAM_ADDR_WIDTH = 7
+	parameter RAM_ADDR_WIDTH = 7
 )(
     input                               ACLK_i,
     input                               ARESETn_i,
@@ -26,13 +26,13 @@ module axi_slave_w #(
     input      [2:0]                    s_AWLEN_i,
     input      [1:0]                    s_AWBURST_i,
     input      [2:0]                    s_AWSIZE_i,
+    input      [3:0]                    s_AWQOS_i,
     output                              s_AWREADY_o,
 
 //================ WRITE DATA ==================//
     // WRITE DATA
     input                               s_WVALID_i,
     input      [DATA_WIDTH-1:0]         s_WDATA_i,
-	 input  [DATA_WIDTH/8-1:0]   			 s_WSTRB_i,
     input                               s_WLAST_i,
     output                              s_WREADY_o,
 
@@ -56,8 +56,8 @@ module axi_slave_w #(
     reg  [1:0]                          reg_s_AWBURST_i;
     reg  [2:0]                          reg_s_AWLEN_i;
     reg  [2:0]                          reg_s_AWSIZE_i;
-	 reg [ID_WIDTH-1:0]                  reg_s_AWID_i;
-
+	reg [ID_WIDTH-1:0]                  reg_s_AWID_i;
+    reg [3:0]                           reg_s_AWQOS_i;
     //BURST W signed
     wire [7:0]                          beat_size_w   = (8'd1 << reg_s_AWSIZE_i);      // số byte mỗi beat
     wire [7:0]                          burst_len_w   = reg_s_AWLEN_i + 8'd1;          // số beat
@@ -153,11 +153,11 @@ module axi_slave_w #(
                         mem_ptr_w      <= s_AWADDR_i;
                         burst_cnt_w <= 0;
                         reg_s_AWID_i  <= s_AWID_i;
-
                         reg_s_AWADDR_i  <= s_AWADDR_i;
                         reg_s_AWBURST_i <= s_AWBURST_i;
                         reg_s_AWLEN_i   <= s_AWLEN_i;
                         reg_s_AWSIZE_i  <= s_AWSIZE_i;
+                        reg_s_AWQOS_i   <= s_AWQOS_i;
                     end
                 end
 

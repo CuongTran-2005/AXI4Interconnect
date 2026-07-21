@@ -26,6 +26,7 @@ module axi_slave_r #(
     input       [7:0]                    s_ARLEN_i,
     input       [1:0]                    s_ARBURST_i,
     input       [2:0]                    s_ARSIZE_i,
+    input       [3:0]                    s_ARQOS_i,
     output                               s_ARREADY_o,
 
 //================ READ DATA =====================//
@@ -51,7 +52,8 @@ module axi_slave_r #(
     reg [1:0]            		reg_s_ARBURST_i;
     reg [7:0]            		reg_s_ARLEN_i;
     reg [2:0]            		reg_s_ARSIZE_i;
-    reg [ID_WIDTH-1:0]  		 reg_s_ARID_i;  //chua dung
+    reg [ID_WIDTH-1:0]  		reg_s_ARID_i;  //chua dung
+    reg [3:0]                   reg_s_ARQOS_i;
 
     //BURST R signed
     wire [7:0]             	beat_size_r   = (8'd1 << reg_s_ARSIZE_i);      // số byte mỗi beat
@@ -150,6 +152,7 @@ module axi_slave_r #(
                         reg_s_ARBURST_i <= s_ARBURST_i;
                         reg_s_ARLEN_i   <= s_ARLEN_i;
                         reg_s_ARSIZE_i  <= s_ARSIZE_i;
+                        reg_s_ARQOS_i   <= s_ARQOS_i;
 
                     end
                 end
