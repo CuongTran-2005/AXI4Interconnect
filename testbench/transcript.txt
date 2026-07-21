@@ -1,0 +1,109 @@
+# do run_sim.do 
+# --- Compiling RTL Design Modules --- 
+# Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+# -- Compiling module AR_dsp_mst_channel
+# -- Compiling module AR_dsp_slv_channel
+# -- Compiling module AW_dsp_mst_channel
+# ** Error: ../rtl/AW_dsp_mst_channel.v(81): near "}": syntax error, unexpected '}'
+# -- Compiling module AW_dsp_slv_channel
+# -- Compiling module B_dsp_mst_channel
+# -- Compiling module B_dsp_slv_channel
+# -- Compiling module MasterIDExtractor
+# -- Compiling module R_dsp_mst_channel
+# -- Compiling module R_dsp_slv_channel
+# -- Compiling module W_dsp_mst_channel
+# ** Error: ../rtl/W_dsp_mst_channel.v(63): near "}": syntax error, unexpected '}'
+# -- Compiling module W_dsp_slv_channel
+# -- Compiling module arbiter_priority_irq
+# -- Compiling module arbiter_top
+# -- Compiling module ax_decoder
+# -- Compiling module axi4_data_channel_controller
+# -- Compiling module axi4_interconnect
+# -- Compiling module axi_datapath
+# ** Error: ../rtl/axi_datapath.v(202): (vlog-2730) Undefined variable: 'mst_sk_AWVALID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(203): (vlog-2730) Undefined variable: 'mst_sk_ARVALID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(204): (vlog-2730) Undefined variable: 'mst_sk_WVALID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(211): (vlog-2730) Undefined variable: 'mst_sk_RREADY'.
+# 
+# ** Error: ../rtl/axi_datapath.v(212): (vlog-2730) Undefined variable: 'mst_sk_BREADY'.
+# 
+# ** Error: ../rtl/axi_datapath.v(218): (vlog-2730) Undefined variable: 'slv_sk_RVALID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(219): (vlog-2730) Undefined variable: 'slv_sk_BVALID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(221): (vlog-2730) Undefined variable: 'slv_sk_AWREADY'.
+# 
+# ** Error: ../rtl/axi_datapath.v(222): (vlog-2730) Undefined variable: 'slv_sk_ARREADY'.
+# 
+# ** Error: ../rtl/axi_datapath.v(223): (vlog-2730) Undefined variable: 'slv_sk_WREADY'.
+# 
+# ** Error: ../rtl/axi_datapath.v(227): (vlog-2730) Undefined variable: 'mst_WLAST'.
+# 
+# ** Error: ../rtl/axi_datapath.v(228): (vlog-2730) Undefined variable: 'mst_RLAST'.
+# 
+# ** Error: ../rtl/axi_datapath.v(230): (vlog-2730) Undefined variable: 'mst_RID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(231): (vlog-2730) Undefined variable: 'mst_BID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(233): (vlog-2730) Undefined variable: 'slv_RID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(234): (vlog-2730) Undefined variable: 'slv_BID'.
+# 
+# ** Error: ../rtl/axi_datapath.v(248): 'mst_sk_ARVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(249): 'mst_sk_ARREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(258): 'mst_sk_AWVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(259): 'mst_sk_AWREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(263): 'mst_WLAST' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(264): 'mst_sk_WVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(265): 'mst_sk_WREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(268): 'mst_RID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(271): 'mst_RLAST' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(272): 'mst_sk_RVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(273): 'mst_sk_RREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(276): 'mst_BID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(278): 'mst_sk_BVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(279): 'mst_sk_BREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(327): 'slv_sk_ARVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(328): 'slv_sk_ARREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(337): 'slv_sk_AWVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(338): 'slv_sk_AWREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(343): 'slv_sk_WVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(344): 'slv_sk_WREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(347): 'slv_RID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(351): 'slv_sk_RVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(352): 'slv_sk_RREADY' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(355): 'slv_BID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(357): 'slv_sk_BVALID' already declared in this scope (axi_datapath).
+# ** Error: ../rtl/axi_datapath.v(358): 'slv_sk_BREADY' already declared in this scope (axi_datapath).
+# -- Compiling module binary_encoder
+# -- Compiling module common_demux
+# -- Compiling module common_mux
+# -- Compiling module constant_comparator
+# -- Compiling module controller
+# -- Compiling module data_controller
+# -- Compiling module data_controller_main_fsm
+# -- Compiling module demux
+# -- Compiling module dsp_mst_channel
+# -- Compiling module dsp_slv_channel
+# -- Compiling module dual_port_mux
+# -- Compiling module fifo
+# -- Compiling module interrupt_controller
+# -- Compiling module irq_pending
+# -- Compiling module mst_side_skid_buffer
+# -- Compiling module one_hot_demux
+# -- Compiling module one_hot_mux
+# -- Compiling module qos_request_mask
+# -- Compiling module round_robin_arbiter
+# -- Compiling module sb_fifo
+# -- Compiling module sc_fifo_lookahead
+# -- Compiling module single_port_mux
+# -- Compiling module skid_buffer
+# -- Compiling module slv_side_skid_buffer
+# ** Error: C:/altera/13.0sp1/modelsim_ase/win32aloem/vlog failed.
+# Error in macro ./run_sim.do line 19
+# C:/altera/13.0sp1/modelsim_ase/win32aloem/vlog failed.
+#     while executing
+# "vlog -sv +incdir+../rtl ../rtl/*.v"

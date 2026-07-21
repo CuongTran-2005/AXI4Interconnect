@@ -20,6 +20,7 @@ module axi_master_if #(
     // Transaction READ
     input                       ReadTrans_EN_i,
     input  [RAM_ADDR_WIDTH-1:0] r_set_addr_memory,   
+    input  [ID_WIDTH-1:0]       set_ARID_i,
     input  [ADDR_WIDTH-1:0]     set_ARADDR_i,
     input  [1:0]                set_ARBURST_i,
     input  [7:0]                set_ARLEN_i,
@@ -29,6 +30,7 @@ module axi_master_if #(
     // Transaction WRITE	
     input                       WriteTrans_EN_i,	
     input  [RAM_ADDR_WIDTH-1:0] w_set_addr_memory,  
+    input  [ID_WIDTH-1:0]       set_AWID_i,
     input  [ADDR_WIDTH-1:0]     set_AWADDR_i,
     input  [1:0]                set_AWBURST_i,
     input  [7:0]                set_AWLEN_i,
@@ -42,7 +44,7 @@ module axi_master_if #(
     output [1:0]                m_AWBURST_o,
     output [7:0]                m_AWLEN_o,
     output [2:0]                m_AWSIZE_o,
-    output                      m_AWQOS_o,
+    output [3:0]                m_AWQOS_o,
     input                       m_AWREADY_i,
 
     //================ WRITE DATA ====================//
@@ -166,6 +168,7 @@ module axi_master_if #(
         
         .WriteTrans_EN_i(WriteTrans_EN_i),	
         .w_set_addr_memory(w_set_addr_memory),  
+        .set_AWID_i(set_AWID_i),
         .set_AWADDR_i(set_AWADDR_i),
         .set_AWBURST_i(set_AWBURST_i),
         .set_AWLEN_i(set_AWLEN_i),
@@ -214,6 +217,7 @@ module axi_master_if #(
         
         .ReadTrans_EN_i(ReadTrans_EN_i),
         .r_set_addr_memory(r_set_addr_memory),   
+        .set_ARID_i(set_ARID_i),
         .set_ARADDR_i(set_ARADDR_i),
         .set_ARBURST_i(set_ARBURST_i),
         .set_ARLEN_i(set_ARLEN_i),

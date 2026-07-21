@@ -10,8 +10,8 @@ parameter SYSTEM_CLOCK_PERIOD               = 20; // nanoseconds
 // ==========================================
 parameter MASTER_NUM                        = 4;
 parameter SLAVE_NUM                         = 4;
-parameter TRANSACTION_MASTER_ID_WIDTH       = 2;
-parameter TRANSACTION_SLAVE_ID_WIDTH        = 2;
+parameter TRANSACTION_MASTER_ID_WIDTH       = 4;
+parameter TRANSACTION_SLAVE_ID_WIDTH        = 4;
 parameter TRANSACTION_QOS_WIDTH             = 4;
 parameter TRANSACTION_LEN_WIDTH             = 8;
 parameter TRANSACTION_SIZE_WIDTH            = 3;
@@ -205,7 +205,7 @@ generate
         assign m_BREADY_i   [i]                                                 = m_BREADY  [i];
         assign m_RREADY_i   [i]                                                 = m_RREADY  [i];
         assign m_WLAST_i    [i]                                                 = m_WLAST   [i];
-        assign m_WVLAID_i   [i]                                                 = m_WVALID  [i];
+        assign m_WVALID_i   [i]                                                 = m_WVALID  [i];
         assign m_WDATA_i    [i*MASTER_DEV_DATA_WIDTH+:MASTER_DEV_DATA_WIDTH]    = m_WDATA   [i];
     end
 endgenerate
@@ -318,7 +318,7 @@ endgenerate
 // ==========================================
 //  SLAVE DEVICE PARAMETERS 
 // ==========================================
-parameter SLAVE_DEV_ID_WIDTH       = TRANSACTION_MASTER_ID_WIDTH;
+parameter SLAVE_DEV_ID_WIDTH       = TRANSACTION_SLAVE_ID_WIDTH;
 parameter SLAVE_DEV_ADDR_WIDTH     = TRANSACTION_ADDR_WIDTH;
 parameter SLAVE_DEV_DATA_WIDTH     = TRANSACTION_DATA_WIDTH;
 parameter SLAVE_DEV_BURST_WIDTH    = TRANSACTION_BURST_WIDTH;
@@ -342,14 +342,14 @@ reg     [SLAVE_DEV_DATA_WIDTH-1:0]          s_DATA_MEMORY_o     [0:SLAVE_NUM-1];
 // UNFLATTENING INTERCONNECT SIGNALS (SLAVE) 
 // ==========================================
 // interconnect --> slave
-wire                                    s_AWID          [0:SLAVE_NUM-1];
+wire    [SLAVE_DEV_ID_WIDTH-1:0]        s_AWID          [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_ADDR_WIDTH-1:0]      s_AWADDR        [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_BURST_WIDTH-1:0]     s_AWBURST       [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_LEN_WIDTH-1:0]       s_AWLEN         [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_SIZE_WIDTH-1:0]      s_AWSIZE        [0:SLAVE_NUM-1];
 wire                                    s_AWVALID       [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_QOS_WIDTH-1:0]       s_AWQOS         [0:SLAVE_NUM-1];
-wire                                    s_ARID          [0:SLAVE_NUM-1];
+wire    [SLAVE_DEV_ID_WIDTH-1:0]        s_ARID          [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_ADDR_WIDTH-1:0]      s_ARADDR        [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_BURST_WIDTH-1:0]     s_ARBURST       [0:SLAVE_NUM-1];
 wire    [SLAVE_DEV_LEN_WIDTH-1:0]       s_ARLEN         [0:SLAVE_NUM-1];
@@ -559,13 +559,13 @@ interconnect (
 
 task automatic masterReadTransaction (
     input integer                                       masterIndex,
-    input wire      [TRANSACTION_MASTER_ID_WIDTH-1:0]   transID,
-    input wire      [TRANSACTION_ADDR_WIDTH-1:0]        transAddr,
-    input wire      [TRANSACTION_LEN_WIDTH-1:0]         transLen,
-    input wire      [TRANSACTION_SIZE_WIDTH-1:0]        transSize,
-    input wire      [TRANSACTION_BURST_WIDTH-1:0]       transBurst,
-    input wire      [TRANSACTION_QOS_WIDTH-1:0]         transQoS,
-    input wire      [MASTER_DEV_RAM_ADDR_WIDTH-1:0]     memAddr
+    input           [TRANSACTION_MASTER_ID_WIDTH-1:0]   transID,
+    input           [TRANSACTION_ADDR_WIDTH-1:0]        transAddr,
+    input           [TRANSACTION_LEN_WIDTH-1:0]         transLen,
+    input           [TRANSACTION_SIZE_WIDTH-1:0]        transSize,
+    input           [TRANSACTION_BURST_WIDTH-1:0]       transBurst,
+    input           [TRANSACTION_QOS_WIDTH-1:0]         transQoS,
+    input           [MASTER_DEV_RAM_ADDR_WIDTH-1:0]     memAddr
 );
 begin 
     @(negedge ACLK_i);
@@ -593,13 +593,13 @@ endtask
 
 task automatic masterWriteTransaction (
     input integer                                       masterIndex,
-    input wire      [TRANSACTION_MASTER_ID_WIDTH-1:0]   transID,
-    input wire      [TRANSACTION_ADDR_WIDTH-1:0]        transAddr,
-    input wire      [TRANSACTION_LEN_WIDTH-1:0]         transLen,
-    input wire      [TRANSACTION_SIZE_WIDTH-1:0]        transSize,
-    input wire      [TRANSACTION_BURST_WIDTH-1:0]       transBurst,
-    input wire      [TRANSACTION_QOS_WIDTH-1:0]         transQoS,
-    input wire      [MASTER_DEV_RAM_ADDR_WIDTH-1:0]     memAddr
+    input           [TRANSACTION_MASTER_ID_WIDTH-1:0]   transID,
+    input           [TRANSACTION_ADDR_WIDTH-1:0]        transAddr,
+    input           [TRANSACTION_LEN_WIDTH-1:0]         transLen,
+    input           [TRANSACTION_SIZE_WIDTH-1:0]        transSize,
+    input           [TRANSACTION_BURST_WIDTH-1:0]       transBurst,
+    input           [TRANSACTION_QOS_WIDTH-1:0]         transQoS,
+    input           [MASTER_DEV_RAM_ADDR_WIDTH-1:0]     memAddr
 );
 begin 
     @(negedge ACLK_i);
@@ -626,74 +626,122 @@ begin
 end
 endtask
 
-function masterReadMemory(
-    input integer                               masterIndex,
-    input wire [MASTER_DEV_RAM_ADDR_WIDTH-1:0]  memAddr,
-    input integer                               byteCount
+task getMasterMemory(input integer i, input [MASTER_DEV_RAM_ADDR_WIDTH-1:0] addr, output [MASTER_DEV_DATA_WIDTH-1:0] readData);
+    begin
+        @(negedge ACLK_i);
+        m_address_memory[i] <= addr;
+        m_READ_EN[i]        <= 1'b1;
+        @(negedge ACLK_i);
+        m_address_memory[i] <= {MASTER_DEV_RAM_ADDR_WIDTH{1'b0}};
+        m_READ_EN[i]        <= 1'b0;
+        readData            <= m_DATA_MEMORY_o[i];
+    end
+endtask
+
+task getSlaveMemory(input integer i, input [SLAVE_DEV_RAM_ADDR_WIDTH-1:0] addr, output [SLAVE_DEV_DATA_WIDTH-1:0] readData);
+    begin
+        @(negedge ACLK_i);
+        s_address_memory[i] <= addr;
+        s_READ_EN[i]        <= 1'b1;
+        @(negedge ACLK_i);
+        s_address_memory[i] <= {SLAVE_DEV_RAM_ADDR_WIDTH{1'b0}};
+        s_READ_EN[i]        <= 1'b0;
+        readData            <= s_DATA_MEMORY_o[i];
+    end
+endtask
+
+task setMasterMemory(input integer i, input [MASTER_DEV_RAM_ADDR_WIDTH-1:0] addr, input [MASTER_DEV_DATA_WIDTH-1:0] writeData);
+    begin
+        @(negedge ACLK_i);
+        m_address_memory[i] <= addr;
+        m_WRITE_EN[i]       <= 1'b1;
+        m_DATA_MEMORY_i[i]  <= writeData;
+        @(negedge ACLK_i);
+        m_address_memory[i] <= {MASTER_DEV_RAM_ADDR_WIDTH{1'b0}};
+        m_WRITE_EN[i]       <= 1'b0;
+    end
+endtask
+
+task setSlaveMemory(input integer i, input [SLAVE_DEV_RAM_ADDR_WIDTH-1:0] addr, input [SLAVE_DEV_DATA_WIDTH-1:0] writeData);
+    begin
+        @(negedge ACLK_i);
+        s_address_memory[i] <= addr;
+        s_WRITE_EN[i]       <= 1'b1;
+        s_DATA_MEMORY_i[i]  <= writeData;
+        @(negedge ACLK_i);
+        s_address_memory[i] <= {MASTER_DEV_RAM_ADDR_WIDTH{1'b0}};
+        s_WRITE_EN[i]       <= 1'b0;
+    end
+endtask
+
+task masterReadMemory(
+    input integer                                   masterIndex,
+    input       [MASTER_DEV_RAM_ADDR_WIDTH-1:0]     memAddr,
+    input integer                                   count
 );
     begin : read_mem
-        if (memAddr + byteCount >= MASTER_DEV_RAM_SIZE) begin
+        integer i;
+        integer j;
+        reg [MASTER_DEV_DATA_WIDTH-1:0] readData;
+        if (memAddr + count >= MASTER_DEV_RAM_SIZE) begin
             $display("[TB] Failed to read master's memory! Address exceeded RAM limits");
             disable read_mem;
         end
-        integer i;
-        integer j;
-        $display("[TB] Read Master %0d memory begin at address %0h, byte count %0d", masterIndex, memAddr, byteCount);
-        for (i = 0;i < byteCount;i = i + 4) begin : read_word
-            $write("%0h: ", i);
-            for (j = i;j < (i+4) & j < byteCount; j = j + 1) begin : read_byte
-                $write("%0h ", u_master_dev[masterIndex].u_axi_ram.mem[j]);
+        $display("[TB] Read Master %0d memory begin at address %0h, byte count %0d", masterIndex, memAddr, count);
+        for (i = 0;i < count;i = i + 4) begin : read_word
+            for (j = i;(j < (i+4)) & (j < count); j = j + 1) begin : read_block_mem
+                getMasterMemory(masterIndex, j, readData);
+                $display("%0h", readData);
             end
-            $write("\n");
         end
     end
-endfunction
+endtask
 
-function slaveReadMemory(
-    input integer                               slaveIndex,
-    input wire [MASTER_DEV_RAM_ADDR_WIDTH-1:0]  memAddr,
-    input integer                               byteCount
+task slaveReadMemory(
+    input integer                                   slaveIndex,
+    input       [MASTER_DEV_RAM_ADDR_WIDTH-1:0]     memAddr,
+    input integer                                   count
 );
     begin : read_mem
-        if (memAddr + byteCount >= SLAVE_DEV_RAM_SIZE) begin
+        integer i;
+        integer j;
+        reg [SLAVE_DEV_DATA_WIDTH-1:0] readData;
+        if (memAddr + count >= SLAVE_DEV_RAM_SIZE) begin
             $display("[TB] Failed to read slave's memory! Address exceeded RAM limits");
             disable read_mem;
         end
-        integer i;
-        integer j;
-        $display("[TB] Read Slave %0d memory begin at address %0h, byte count %0d", slaveIndex, memAddr, byteCount);
-        for (i = 0;i < byteCount;i = i + 4) begin : read_word
-            $write("%0h: ", i);
-            for (j = i;j < (i+4) & j < byteCount; j = j + 1) begin : read_byte
-                $write("%0h ", u_slave_dev[slaveIndex].u_axi_ram.mem[j]);
+        $display("[TB] Read Slave %0d memory begin at address %0h, byte count %0d", slaveIndex, memAddr, count);
+        for (i = 0;i < count;i = i + 4) begin : read_word
+            for (j = i;(j < (i+4)) & (j < count); j = j + 1) begin : read_block_mem
+                getSlaveMemory(slaveIndex, j, readData);
+                $display("%0h", readData);
             end
-            $write("\n");
         end
     end
-endfunction
+endtask
 
-function masterWriteByteMemory (
-    input integer                               masterIndex,
-    input wire [MASTER_DEV_RAM_ADDR_WIDTH-1:0]  memAddr,
-    input wire [7:0]                            byte
+task masterWriteMemory (
+    input integer                                   masterIndex,
+    input       [MASTER_DEV_RAM_ADDR_WIDTH-1:0]     memAddr,
+    input       [MASTER_DEV_DATA_WIDTH-1:0]         writeData
 );
-    begin : write_byte
-        $display("[TB] Write Master %0d memory, address %0h, data %0h", masterIndex, memAddr, byte);
-        u_master_dev[masterIndex].u_axi_ram.mem[memAddr] = byte; 
+    begin : write_mem
+        $display("[TB] Write Master %0d memory, address %0h, data %0h", masterIndex, memAddr, writeData);
+        setMasterMemory(masterIndex, memAddr, writeData);
     end
-endfunction
+endtask
 
-function slaveWriteByteMemory (
-    input integer                               slaveIndex,
-    input wire [SLAVE_DEV_RAM_ADDR_WIDTH-1:0]   memAddr,
-    input wire [7:0]                            byte
+task slaveWriteMemory (
+    input integer                                   slaveIndex,
+    input       [SLAVE_DEV_RAM_ADDR_WIDTH-1:0]      memAddr,
+    input       [SLAVE_DEV_DATA_WIDTH-1:0]          writeData
 );
 
-    begin : write_byte
-        $display("[TB] Write Slave %0d memory, address %0h, data %0h", slaveIndex, memAddr, byte);
-        u_slave_dev[slaveIndex].u_axi_ram.mem[memAddr] = byte;
+    begin : write_mem
+        $display("[TB] Write Slave %0d memory, address %0h, data %0h", slaveIndex, memAddr, writeData);
+        setSlaveMemory(slaveIndex, memAddr, writeData);
     end
-endfunction
+endtask
 
 task systemReset;
     ACLK_i      <= 1'b0;
@@ -709,28 +757,6 @@ endtask
 // clock generator
 always begin : clk_gen
     delayNs(SYSTEM_CLOCK_PERIOD/2); ACLK_i <= ~ACLK_i;
-end
-
-initial begin : main
-    $dumpfile("dump.vcd");
-    $dumpvars(0, axi_interconnect_tb);
-    systemReset();
-    delayNs(SYSTEM_CLOCK_PERIOD * 5);
-    ARESETn_i <= 1'b1;
-
-    /* TESTCASE 1: ISSUE ONE WRITE TRANSACTION AND ONE READ TRANSACTION */
-    // setup master 0 memory
-    masterWriteByteMemory(0, 0, 8'hAA);
-    masterWriteByteMemory(0, 1, 8'hBB);
-    masterWriteByteMemory(0, 2, 8'hCC);
-    masterWriteByteMemory(0, 3, 8'hDD);
-    // issue write transaction (master[0] --> slave[0])
-    masterWriteTransaction(.masterIndex(0), .transID(0), .transAddr(0), .transLen(0), .transSize(3'd2), .transBurst(2'd2), .transQoS(0), .memAddr(0));
-    delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
-    // issue read transaction (master[0] <-- slave[0])
-    masterReadTransaction(.masterIndex(0), .transID(0), .transAddr(0), .transLen(0), .transSize(3'd2), .transBurst(2'd2), .transQoS(0), .memAddr(4));
-    masterReadMemory(0, 4, 4);
-    $finish;
 end
 
 // monitor
@@ -829,5 +855,27 @@ initial begin : watchdog
     $display("TIMEOUT!. The simulation was forced to stop at %d", $time);
     $finish;
 end
+
+initial begin : main
+    $dumpfile("dump.vcd");
+    $dumpvars(0, axi_interconnect_tb);
+    systemReset();
+    delayNs(SYSTEM_CLOCK_PERIOD * 5);
+    ARESETn_i <= 1'b1;
+    delayNs(100);
+
+    /* TESTCASE 1: ISSUE ONE WRITE TRANSACTION AND ONE READ TRANSACTION */
+    // setup master 0 memory
+    masterWriteMemory(0, 0, 32'hAABBCCDD);
+    masterReadMemory(0, 0, 1);
+    // issue write transaction (master[0] --> slave[0])
+    masterWriteTransaction(.masterIndex(0), .transID(0), .transAddr(0), .transLen(0), .transSize(3'd2), .transBurst(2'd2), .transQoS(0), .memAddr(0));
+    delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
+    // issue read transaction (master[0] <-- slave[0])
+    masterReadTransaction(.masterIndex(0), .transID(0), .transAddr(0), .transLen(0), .transSize(3'd2), .transBurst(2'd2), .transQoS(0), .memAddr(4));
+    delayNs(1000);
+    $finish;
+end
+
 
 endmodule

@@ -23,7 +23,7 @@ module axi_slave_w #(
     input                               s_AWVALID_i,
     input      [ID_WIDTH-1:0]           s_AWID_i,
     input      [ADDR_WIDTH-1:0]         s_AWADDR_i,
-    input      [2:0]                    s_AWLEN_i,
+    input      [7:0]                    s_AWLEN_i,
     input      [1:0]                    s_AWBURST_i,
     input      [2:0]                    s_AWSIZE_i,
     input      [3:0]                    s_AWQOS_i,
@@ -54,7 +54,7 @@ module axi_slave_w #(
 
     reg  [ADDR_WIDTH-1:0]               reg_s_AWADDR_i;
     reg  [1:0]                          reg_s_AWBURST_i;
-    reg  [2:0]                          reg_s_AWLEN_i;
+    reg  [7:0]                          reg_s_AWLEN_i;
     reg  [2:0]                          reg_s_AWSIZE_i;
 	reg [ID_WIDTH-1:0]                  reg_s_AWID_i;
     reg [3:0]                           reg_s_AWQOS_i;
