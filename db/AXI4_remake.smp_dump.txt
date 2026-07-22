@@ -1,0 +1,56 @@
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[3].u_controller|axi4_data_channel_controller:r_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[3].u_controller|axi4_data_channel_controller:b_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[2].u_controller|axi4_data_channel_controller:r_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[2].u_controller|axi4_data_channel_controller:b_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[1].u_controller|axi4_data_channel_controller:r_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[1].u_controller|axi4_data_channel_controller:b_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[0].u_controller|axi4_data_channel_controller:r_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
+
+State Machine - |axi4_interconnect|controller:GEN_CONTROLLER[0].u_controller|axi4_data_channel_controller:b_data_channel_controller|data_controller:u_data_controller|data_controller_main_fsm:u_main_fsm|state
+Name state.S_STALL state.S_ALLOCATED state.S_ARBITRATION state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_ARBITRATION 0 0 1 1 
+state.S_ALLOCATED 0 1 0 1 
+state.S_STALL 1 0 0 1 
