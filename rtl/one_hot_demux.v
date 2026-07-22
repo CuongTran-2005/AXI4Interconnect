@@ -15,7 +15,7 @@ module one_hot_demux #(
         for (i = 0; i < N; i = i + 1) begin : g_demux_lanes
             // If the i-th bit of 'sel' is high, route 'data_in' to the i-th output slot.
             // Otherwise, drive the i-th output slot to 0.
-            assign data_out[i*DATA_WIDTH +: DATA_WIDTH] = sel[i] ? data_in : {DATA_WIDTH{1'b0}};
+            assign data_out[i*DATA_WIDTH +: DATA_WIDTH] = sel[i] ? data_in : {DATA_WIDTH{1'bx}};
         end
     endgenerate
 

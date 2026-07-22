@@ -71,7 +71,7 @@ generate
         
         // Flip-flop
         // -- Foward 
-        always @(posedge clk) begin
+        always @(posedge clk or negedge rst_n) begin
             if(!rst_n) begin
                 fwd_valid_q <= 1'b0;
             end
@@ -81,7 +81,7 @@ generate
             end
         end
         // -- Backward
-        always @(posedge clk) begin
+        always @(posedge clk or negedge rst_n) begin
             if(!rst_n) begin
                 bwd_ready_q <= 1'b1;
             end

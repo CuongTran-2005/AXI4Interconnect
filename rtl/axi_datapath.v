@@ -118,8 +118,8 @@ module axi_datapath #(
     output [MST_AMT -1:0]								        ctl_mst_wlast_o,
     output [MST_AMT -1:0]								        ctl_mst_rlast_o,
     //R/B ID
-    output [TRANS_MST_ID_W *SLV_AMT-1:0]                        r_trans_mst_id_o,
-    output [TRANS_MST_ID_W * SLV_AMT-1:0]                       b_trans_mst_id_o,
+    output [TRANS_MST_ID_W *SLV_AMT *MST_AMT-1:0]                        r_trans_mst_id_o,
+    output [TRANS_MST_ID_W * SLV_AMT *MST_AMT -1:0]                       b_trans_mst_id_o,
 
     //========signal for arbiter ================
     output [TRANS_MST_ID_W * MST_AMT -1:0]                      r_trans_slv_id_o,
@@ -353,8 +353,8 @@ assign slv_sk_BREADY = ctl_slv_sk_b_ready_i;
 assign ctl_mst_wlast_o = mst_WLAST;
 assign ctl_mst_rlast_o = mst_RLAST;
 
-assign r_trans_mst_id_o = mst_RID;
-assign b_trans_mst_id_o = mst_BID;
+assign r_trans_mst_id_o = xbar_RID;
+assign b_trans_mst_id_o = xbar_BID;
 //output to arbiter
 assign r_trans_slv_id_o = slv_RID;
 assign b_trans_slv_id_o = slv_BID;

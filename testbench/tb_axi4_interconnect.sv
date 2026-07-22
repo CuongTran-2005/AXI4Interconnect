@@ -868,13 +868,13 @@ initial begin : main
 
     /* TESTCASE 1: ISSUE ONE WRITE TRANSACTION AND ONE READ TRANSACTION */
     // setup master 0 memory
-    masterWriteMemory(0, 0, 32'hAABBCCDD);
-    masterReadMemory(0, 0, 1);
+    masterWriteMemory(1, 0, 32'hAABBCCDD);
+    masterReadMemory(1, 0, 1);
     // issue write transaction (master[0] --> slave[0])
-    masterWriteTransaction(.masterIndex(0), .transID(0), .transAddr(0), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
     delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
     // issue read transaction (master[0] <-- slave[0])
-    masterReadTransaction(.masterIndex(0), .transID(0), .transAddr(0), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
+    masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
     delayNs(1000);
     $finish;
 end
