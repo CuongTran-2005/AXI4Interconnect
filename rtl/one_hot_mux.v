@@ -13,7 +13,7 @@ module one_hot_mux #(
 
     always @(*) begin
         // Initialize output to 0
-        data_out = {DATA_WIDTH{1'b0}};
+        data_out = {DATA_WIDTH{1'bx}};
         
         // Loop through all N input channels
         for (i = 0; i < N; i = i + 1) begin

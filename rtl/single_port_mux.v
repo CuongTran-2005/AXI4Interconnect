@@ -12,7 +12,7 @@ module single_port_mux #(
         if (sel < N) begin
             out = data_in[(sel * DATA_WIDTH) +: DATA_WIDTH];
         end else begin
-            out = {DATA_WIDTH{1'b0}};
+            out = {DATA_WIDTH{1'bx}};
         end
     end
 

@@ -146,8 +146,8 @@ module axi4_interconnect #(
     wire [MST_AMT-1:0]              ctl_mst_rlast;
 
     // Transaction ID
-    wire [TRANS_MST_ID_W*SLV_AMT-1:0] r_trans_mst_id;
-    wire [TRANS_MST_ID_W*SLV_AMT-1:0] b_trans_mst_id;
+    wire [TRANS_MST_ID_W*SLV_AMT * MST_AMT-1:0] r_trans_mst_id;
+    wire [TRANS_MST_ID_W*SLV_AMT * MST_AMT-1:0] b_trans_mst_id;
 
     wire [TRANS_MST_ID_W*MST_AMT-1:0] r_trans_slv_id;
     wire [TRANS_MST_ID_W*MST_AMT-1:0] b_trans_slv_id;
@@ -484,7 +484,7 @@ module axi4_interconnect #(
                 .B_last_i           (1'b1),
 
                 .B_trans_ID_i       (
-                    b_trans_mst_id
+                    b_trans_mst_id [m*(TRANS_MST_ID_W*SLV_AMT) +: (TRANS_MST_ID_W*SLV_AMT)]
                 ),
 
                 .B_empty_i          (
@@ -494,7 +494,7 @@ module axi4_interconnect #(
                 .R_last_i           (ctl_mst_rlast[m]),
 
                 .R_trans_ID_i       (
-                    r_trans_mst_id
+                    r_trans_mst_id [m*(TRANS_MST_ID_W*SLV_AMT) +: (TRANS_MST_ID_W*SLV_AMT)]
                 ),
 
                 .R_empty_i          (
@@ -520,10 +520,17 @@ module axi4_interconnect #(
                     b_fifo_rd_en[m*SLV_AMT +: SLV_AMT]
                 ),
 
+                .B_slave_id_o(
+                    ctl_slave_id_b[(m+1)*SLV_ID_W-1 -: SLV_ID_W]
+                ),
+                
                 .R_one_hot_grant_o  (
                     r_fifo_rd_en[m*SLV_AMT +: SLV_AMT]
                 ),
-
+                
+                .R_slave_id_o(
+                    ctl_slave_id_r[(m+1)*SLV_ID_W-1 -: SLV_ID_W]
+                ),
                 .AW_fifo_write_o    (
                     aw_fifo_wr_en[m*SLV_AMT +: SLV_AMT]
                 ),

@@ -59,10 +59,10 @@ module controller # (
 	
 	// B Channel fifo one-hot grant signal
 	output wire [SLAVE_NUM-1:0]							B_one_hot_grant_o,
-	
+	output wire [SLAVE_ID_WIDTH -1 :0]					B_slave_id_o,
 	// R Channel fifo one-hot grant signal
 	output wire [SLAVE_NUM-1:0] 						R_one_hot_grant_o,
-	
+	output wire [SLAVE_ID_WIDTH -1 :0]					R_slave_id_o,
 	// fifo_write -> AW Channel
 	output wire [SLAVE_NUM-1:0]							AW_fifo_write_o,
 	
@@ -355,4 +355,18 @@ module controller # (
 	assign AR_fifo_write_o = ar_fifo_write_demux_out;
 	assign AR_slave_id_o = ar_decoder_slave_id;
 	assign ar_decoder_handshake = AR_ready_o & AR_valid_i;
+	one_hot_encoder #(
+		.N_AMT (SLAVE_NUM),
+		.N_ID_W(SLAVE_ID_WIDTH)
+	) u_B_one_hot_encoder (
+		.one_hot_grant_i(B_one_hot_grant_o),
+		.id_o           (R_slave_id_o)
+	);
+	one_hot_encoder #(
+		.N_AMT (SLAVE_NUM),
+		.N_ID_W(SLAVE_ID_WIDTH)
+	) u_R_one_hot_encoder (
+		.one_hot_grant_i(R_one_hot_grant_o),
+		.id_o           (R_slave_id_o)
+	);
 endmodule

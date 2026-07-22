@@ -14,7 +14,7 @@ genvar idx;
 generate
     for (idx = 0; idx < OUT_AMT; idx = idx + 1)
     begin : GEN_DEMUX
-        assign data_o[idx*DATA_WIDTH +: DATA_WIDTH]= (sel_i == idx) ? data_i : {DATA_WIDTH{1'b0}};
+        assign data_o[idx*DATA_WIDTH +: DATA_WIDTH]= (sel_i == idx) ? data_i : {DATA_WIDTH{1'bx}};
     end
 endgenerate
 

@@ -128,6 +128,7 @@ assign ar_in = {
 
 skid_buffer
 #(
+    .SBUF_TYPE(0),
     .DATA_WIDTH(AR_CH_W)
 )
 u_ar_skid
@@ -168,6 +169,7 @@ assign aw_in = {
 
 skid_buffer
 #(
+    .SBUF_TYPE(0),
     .DATA_WIDTH(AW_CH_W)
 )
 u_aw_skid
@@ -204,6 +206,7 @@ assign w_in = {
 
 skid_buffer
 #(
+    .SBUF_TYPE(0),
     .DATA_WIDTH(W_CH_W)
 )
 u_w_skid
@@ -238,6 +241,7 @@ assign r_in = {
 
 skid_buffer
 #(
+    .SBUF_TYPE(0),
     .DATA_WIDTH(R_CH_W)
 )
 u_r_skid
@@ -271,6 +275,7 @@ assign b_in = {
 
 skid_buffer
 #(
+    .SBUF_TYPE(0),
     .DATA_WIDTH(B_CH_W)
 )
 u_b_skid

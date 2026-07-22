@@ -13,7 +13,7 @@ always @(*) begin
     if(sel_i < OUT_AMT)
         data_o = data_i[sel_i*DATA_WIDTH +: DATA_WIDTH];
     else
-        data_o = 1'b0;
+        data_o = {DATA_WIDTH{1'bx}};
 end
 
 endmodule
