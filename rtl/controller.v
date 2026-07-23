@@ -360,7 +360,7 @@ module controller # (
 		.N_ID_W(SLAVE_ID_WIDTH)
 	) u_B_one_hot_encoder (
 		.one_hot_grant_i(B_one_hot_grant_o),
-		.id_o           (R_slave_id_o)
+		.id_o           (B_slave_id_o)
 	);
 	one_hot_encoder #(
 		.N_AMT (SLAVE_NUM),

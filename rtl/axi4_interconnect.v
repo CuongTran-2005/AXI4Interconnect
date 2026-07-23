@@ -75,7 +75,7 @@ module axi4_interconnect #(
     //======================================================================
 
     //------------------------- AW Channel -------------------------
-    output wire [TRANS_MST_ID_W*SLV_AMT-1:0]            s_AWID_o,
+    output wire [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT-1:0]            s_AWID_o,
     output wire [ADDR_WIDTH*SLV_AMT-1:0]                s_AWADDR_o,
     output wire [TRANS_DATA_LEN_W*SLV_AMT-1:0]          s_AWLEN_o,
     output wire [TRANS_DATA_SIZE_W*SLV_AMT-1:0]         s_AWSIZE_o,
@@ -91,13 +91,13 @@ module axi4_interconnect #(
     input  wire [SLV_AMT-1:0]                           s_WREADY_i,
 
     //------------------------- B Channel --------------------------
-    input  wire [TRANS_MST_ID_W*SLV_AMT-1:0]            s_BID_i,
+    input  wire [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT-1:0]            s_BID_i,
     input  wire [TRANS_WR_RESP_W*SLV_AMT-1:0]           s_BRESP_i,
     input  wire [SLV_AMT-1:0]                           s_BVALID_i,
     output wire [SLV_AMT-1:0]                           s_BREADY_o,
 
     //------------------------- AR Channel -------------------------
-    output wire [TRANS_MST_ID_W*SLV_AMT-1:0]            s_ARID_o,
+    output wire [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT-1:0]            s_ARID_o,
     output wire [ADDR_WIDTH*SLV_AMT-1:0]                s_ARADDR_o,
     output wire [TRANS_DATA_LEN_W*SLV_AMT-1:0]          s_ARLEN_o,
     output wire [TRANS_DATA_SIZE_W*SLV_AMT-1:0]         s_ARSIZE_o,
@@ -107,7 +107,7 @@ module axi4_interconnect #(
     input  wire [SLV_AMT-1:0]                           s_ARREADY_i,
 
     //------------------------- R Channel --------------------------
-    input  wire [TRANS_MST_ID_W*SLV_AMT-1:0]            s_RID_i,
+    input  wire [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT-1:0]            s_RID_i,
     input  wire [DATA_WIDTH*SLV_AMT-1:0]                s_RDATA_i,
     input  wire [TRANS_WR_RESP_W*SLV_AMT-1:0]           s_RRESP_i,
     input  wire [SLV_AMT-1:0]                           s_RLAST_i,
@@ -149,8 +149,8 @@ module axi4_interconnect #(
     wire [TRANS_MST_ID_W*SLV_AMT * MST_AMT-1:0] r_trans_mst_id;
     wire [TRANS_MST_ID_W*SLV_AMT * MST_AMT-1:0] b_trans_mst_id;
 
-    wire [TRANS_MST_ID_W*MST_AMT-1:0] r_trans_slv_id;
-    wire [TRANS_MST_ID_W*MST_AMT-1:0] b_trans_slv_id;
+    wire [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT-1:0] r_trans_slv_id;
+    wire [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT-1:0] b_trans_slv_id;
 
     // QoS
     wire [TRANS_QOS_W*MST_AMT*SLV_AMT-1:0]  ctl_slv_AWQOS;
@@ -616,7 +616,7 @@ module axi4_interconnect #(
         for (s = 0; s < SLV_AMT; s = s + 1) begin : GEN_ARBITER
 
             arbiter_top #(
-                .SLAVE_TRANSACTION_ID_WIDTH    (TRANS_MST_ID_W),
+                .SLAVE_TRANSACTION_ID_WIDTH    (TRANS_MST_ID_W+MST_ID_W),
                 .MASTER_NUM                    (MST_AMT),
                 .MASTER_ID_WIDTH               (MST_ID_W),
                 .QOS_WIDTH                     (TRANS_QOS_W),
@@ -732,13 +732,13 @@ module axi4_interconnect #(
                 ),
 
                 .B_ID_i                 (
-                    b_trans_slv_id[(s+1)*TRANS_MST_ID_W-1 -:
-                                TRANS_MST_ID_W]
+                    b_trans_slv_id[(s+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -:
+                                TRANS_MST_ID_W+MST_ID_W]
                 ),
 
                 .R_ID_i                 (
-                    r_trans_slv_id[(s+1)*TRANS_MST_ID_W-1 -:
-                                TRANS_MST_ID_W]
+                    r_trans_slv_id[(s+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -:
+                                TRANS_MST_ID_W+MST_ID_W]
                 ),
 
                 //----------------------------------------------------------
