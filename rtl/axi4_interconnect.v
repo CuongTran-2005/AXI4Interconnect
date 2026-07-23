@@ -144,7 +144,7 @@ module axi4_interconnect #(
     // Last signals
     wire [MST_AMT-1:0]              ctl_mst_wlast;
     wire [MST_AMT-1:0]              ctl_mst_rlast;
-
+    wire [SLV_AMT-1:0]              ctl_slv_wlast;
     // Transaction ID
     wire [TRANS_MST_ID_W*SLV_AMT * MST_AMT-1:0] r_trans_mst_id;
     wire [TRANS_MST_ID_W*SLV_AMT * MST_AMT-1:0] b_trans_mst_id;
@@ -384,6 +384,8 @@ module axi4_interconnect #(
         //----------------------------------------------------------------------
         .r_trans_slv_id_o       (r_trans_slv_id),
         .b_trans_slv_id_o       (b_trans_slv_id),
+        
+        .ctl_slv_wlast_o        (ctl_slv_wlast),        
 
         .ctl_slv_AWQOS_o        (ctl_slv_AWQOS),
         .ctl_slv_ARQOS_o        (ctl_slv_ARQOS),
@@ -741,7 +743,7 @@ endgenerate
                 ),
 
                 .W_last_i               (
-                    s_WLAST_o[s]
+                    ctl_slv_wlast[s]
                 ),
 
                 .B_valid_i              (
