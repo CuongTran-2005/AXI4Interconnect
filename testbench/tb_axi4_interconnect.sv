@@ -11,7 +11,7 @@ parameter SYSTEM_CLOCK_PERIOD               = 20; // nanoseconds
 parameter MASTER_NUM                        = 4;
 parameter SLAVE_NUM                         = 4;
 parameter TRANSACTION_MASTER_ID_WIDTH       = 4;
-parameter TRANSACTION_SLAVE_ID_WIDTH        = 4;
+parameter TRANSACTION_SLAVE_ID_WIDTH        = 6;
 parameter TRANSACTION_QOS_WIDTH             = 4;
 parameter TRANSACTION_LEN_WIDTH             = 8;
 parameter TRANSACTION_SIZE_WIDTH            = 3;
@@ -84,12 +84,12 @@ wire [MASTER_NUM-1:0]                                 m_ARREADY_o;
 wire [MASTER_NUM-1:0]                                 m_WREADY_o;
 // b
 wire [MASTER_NUM-1:0]                                 m_BVALID_o;
-wire [TRANSACTION_SLAVE_ID_WIDTH*MASTER_NUM-1:0]      m_BID_o;
+wire [TRANSACTION_MASTER_ID_WIDTH*MASTER_NUM-1:0]      m_BID_o;
 wire [TRANSACTION_RESP_WIDTH*MASTER_NUM-1:0]          m_BRESP_o;
 // r 
 wire [MASTER_NUM-1:0]                                 m_RLAST_o;
 wire [MASTER_NUM-1:0]                                 m_RVALID_o;
-wire [TRANSACTION_SLAVE_ID_WIDTH*MASTER_NUM-1:0]      m_RID_o;
+wire [TRANSACTION_MASTER_ID_WIDTH*MASTER_NUM-1:0]      m_RID_o;
 wire [TRANSACTION_DATA_WIDTH*MASTER_NUM-1:0]          m_RDATA_o;
 wire [TRANSACTION_RESP_WIDTH*MASTER_NUM-1:0]          m_RRESP_o;
 

@@ -53,7 +53,7 @@ module dsp_slv_channel #(
     // output [MST_AMT-1:0]                        fifo_aw_req,
     //-----AR dsp_slv channel------
 	 //slave side fixed
-	output   [TRANS_MST_ID_W-1:0]                       s_ARID_o, 
+	output   [TRANS_MST_ID_W+MST_ID_W-1:0]                       s_ARID_o, 
     output   [ADDR_WIDTH-1:0]                           s_ARADDR_o,
     output   [TRANS_BURST_W-1:0]             	        s_ARBURST_o,
     output   [TRANS_DATA_LEN_W-1:0]          	        s_ARLEN_o,
@@ -72,7 +72,7 @@ module dsp_slv_channel #(
     // output  [MST_AMT -1:0]                              ma_ARREADY_o,
 	 //-----R dsp_mst channel------
 	 //slave side fixed
-	input  [TRANS_MST_ID_W-1:0]    s_RID_i,
+	input  [TRANS_MST_ID_W+MST_ID_W-1:0]    s_RID_i,
     input  [DATA_WIDTH-1:0]        s_RDATA_i,
     input  [TRANS_WR_RESP_W-1:0]   s_RRESP_i,
     input                          s_RLAST_i,
@@ -87,7 +87,7 @@ module dsp_slv_channel #(
     // input   [MST_AMT-1:0]                     ma_RREADY_i,
 	 //-----AW dsp_mst channel -------
     // Slave side fixed
-    output  [TRANS_MST_ID_W-1:0]      s_AWID_o,
+    output  [TRANS_MST_ID_W+MST_ID_W-1:0]      s_AWID_o,
     output  [ADDR_WIDTH-1:0]          s_AWADDR_o,
     output  [TRANS_BURST_W-1:0]       s_AWBURST_o,
     output  [TRANS_DATA_LEN_W-1:0]    s_AWLEN_o,
@@ -120,7 +120,7 @@ module dsp_slv_channel #(
 	 //----B dsp_mst channel --------
 	  // Master interface
     // Slave side fixed
-    input   [TRANS_MST_ID_W-1:0]      s_BID_i,
+    input   [TRANS_MST_ID_W+MST_ID_W-1:0]      s_BID_i,
     input   [TRANS_WR_RESP_W-1:0]     s_BRESP_i,
     // input                             s_BVALID_i,
     // output                            s_BREADY_o,
@@ -289,7 +289,7 @@ u_AR_dsp_slv_channel (
     .ctl_MST_ID_i   (ctl_master_id_ar_i)
 );
 //append ARID
-assign s_ARID_o = {ctl_master_id_ar_i, s_ARID_o_mux[TRANS_MST_ID_W - MST_ID_W -1:0]};
+assign s_ARID_o = {ctl_master_id_ar_i, s_ARID_o_mux};
 
 //AW channel
 
@@ -406,7 +406,7 @@ u_AW_dsp_slv_channel (
     .ctl_MST_ID_i   (ctl_master_id_aw_i)
 );
 //append awid
-assign s_AWID_o = {ctl_master_id_aw_i, s_AWID_o_mux[TRANS_MST_ID_W - MST_ID_W -1:0]};
+assign s_AWID_o = {ctl_master_id_aw_i, s_AWID_o_mux};
 
 //W channel
 //==========================================================
@@ -540,7 +540,7 @@ u_R_dsp_slv_channel (
     // Slave interface
     //-------------------------------------
 
-    .s_RID_i        (s_RID_i),
+    .s_RID_i        (s_RID_i[TRANS_MST_ID_W-1:0]),
     .s_RDATA_i      (s_RDATA_i),
     .s_RRESP_i      (s_RRESP_i),
     .s_RLAST_i      (s_RLAST_i),
@@ -582,7 +582,7 @@ u_B_dsp_slv_channel (
     // Slave interface
     //-------------------------------------
 
-    .s_BID_i        (s_BID_i),
+    .s_BID_i        (s_BID_i[TRANS_MST_ID_W-1:0]),
     .s_BRESP_i      (s_BRESP_i),
     // .s_BVALID_i     (s_BVALID_i),
     // .s_BREADY_o     (s_BREADY_o),

@@ -58,7 +58,7 @@ module axi_datapath #(
     input   [MST_AMT-1:0]                                       m_BREADY_i,
     //slave side
     //AR
-    output   [TRANS_MST_ID_W * SLV_AMT-1:0]                     s_ARID_o, 
+    output   [(TRANS_MST_ID_W+MST_ID_W) * SLV_AMT-1:0]                     s_ARID_o, 
     output   [ADDR_WIDTH * SLV_AMT-1:0]                         s_ARADDR_o,
     output   [TRANS_BURST_W * SLV_AMT-1:0]             	        s_ARBURST_o,
     output   [TRANS_DATA_LEN_W * SLV_AMT-1:0]          	        s_ARLEN_o,
@@ -67,14 +67,14 @@ module axi_datapath #(
     output  [SLV_AMT-1:0]                                       s_ARVALID_o,
     input   [SLV_AMT-1:0]                                       s_ARREADY_i,
     //R
-    input  [TRANS_MST_ID_W*SLV_AMT -1:0]                        s_RID_i,
+    input  [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT -1:0]                        s_RID_i,
     input  [DATA_WIDTH * SLV_AMT-1:0]                           s_RDATA_i,
     input  [TRANS_WR_RESP_W * SLV_AMT-1:0]                      s_RRESP_i,
     input   [SLV_AMT-1:0]                                       s_RLAST_i,
     input   [SLV_AMT-1:0]                                       s_RVALID_i,
     output  [SLV_AMT-1:0]                                       s_RREADY_o,
     //AW
-    output  [TRANS_MST_ID_W*SLV_AMT -1:0]                       s_AWID_o,
+    output  [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT -1:0]                       s_AWID_o,
     output  [ADDR_WIDTH * SLV_AMT-1:0]                          s_AWADDR_o,
     output  [TRANS_BURST_W * SLV_AMT-1:0]                       s_AWBURST_o,
     output  [TRANS_DATA_LEN_W * SLV_AMT-1:0]                    s_AWLEN_o,
@@ -88,7 +88,7 @@ module axi_datapath #(
     output  [SLV_AMT-1:0]                                       s_WVALID_o,
     input   [SLV_AMT-1:0]                                       s_WREADY_i,
     //B
-    input   [TRANS_MST_ID_W * SLV_AMT -1:0]                     s_BID_i,
+    input   [(MST_ID_W+TRANS_MST_ID_W) * SLV_AMT -1:0]                     s_BID_i,
     input   [TRANS_WR_RESP_W * SLV_AMT-1:0]                     s_BRESP_i,
     input   [SLV_AMT-1:0]                                       s_BVALID_i,
     output  [SLV_AMT-1:0]                                       s_BREADY_o,
@@ -122,8 +122,8 @@ module axi_datapath #(
     output [TRANS_MST_ID_W * SLV_AMT *MST_AMT -1:0]                       b_trans_mst_id_o,
 
     //========signal for arbiter ================
-    output [TRANS_MST_ID_W * MST_AMT -1:0]                      r_trans_slv_id_o,
-    output [TRANS_MST_ID_W * MST_AMT -1:0]                      b_trans_slv_id_o,
+    output [(TRANS_MST_ID_W+MST_ID_W) * SLV_AMT -1:0]                      r_trans_slv_id_o,
+    output [(TRANS_MST_ID_W+MST_ID_W) * SLV_AMT -1:0]                      b_trans_slv_id_o,
 
     output [(TRANS_QOS_W * MST_AMT) * SLV_AMT-1:0]        ctl_slv_AWQOS_o,
 	output [(TRANS_QOS_W * MST_AMT) * SLV_AMT-1:0]        ctl_slv_ARQOS_o,
@@ -286,7 +286,7 @@ wire [TRANS_WR_RESP_W*MST_AMT*SLV_AMT-1:0]     xbar_BRESP;
 //==========================================================
 
 //--------------- AR -----------------
-wire [TRANS_MST_ID_W*SLV_AMT-1:0]        slv_ARID;
+wire [(TRANS_MST_ID_W+MST_ID_W)*SLV_AMT-1:0]        slv_ARID;
 wire [ADDR_WIDTH*SLV_AMT-1:0]            slv_ARADDR;
 wire [TRANS_BURST_W*SLV_AMT-1:0]         slv_ARBURST;
 wire [TRANS_DATA_LEN_W*SLV_AMT-1:0]      slv_ARLEN;
@@ -296,7 +296,7 @@ wire [SLV_AMT-1:0]                       slv_sk_ARVALID;
 wire [SLV_AMT-1:0]                       slv_sk_ARREADY;
 
 //--------------- AW -----------------
-wire [TRANS_MST_ID_W*SLV_AMT-1:0]        slv_AWID;
+wire [(TRANS_MST_ID_W+MST_ID_W)*SLV_AMT-1:0]        slv_AWID;
 wire [ADDR_WIDTH*SLV_AMT-1:0]            slv_AWADDR;
 wire [TRANS_BURST_W*SLV_AMT-1:0]         slv_AWBURST;
 wire [TRANS_DATA_LEN_W*SLV_AMT-1:0]      slv_AWLEN;
@@ -312,7 +312,7 @@ wire [SLV_AMT-1:0]                       slv_sk_WVALID;
 wire [SLV_AMT-1:0]                       slv_sk_WREADY;
 
 //--------------- R ------------------
-wire [TRANS_MST_ID_W*SLV_AMT-1:0]        slv_RID;
+wire [(TRANS_MST_ID_W+MST_ID_W)*SLV_AMT-1:0]        slv_RID;
 wire [DATA_WIDTH*SLV_AMT-1:0]            slv_RDATA;
 wire [TRANS_WR_RESP_W*SLV_AMT-1:0]       slv_RRESP;
 wire [SLV_AMT-1:0]                       slv_RLAST;
@@ -320,7 +320,7 @@ wire [SLV_AMT-1:0]                       slv_sk_RVALID;
 wire [SLV_AMT-1:0]                       slv_sk_RREADY;
 
 //--------------- B ------------------
-wire [TRANS_MST_ID_W*SLV_AMT-1:0]        slv_BID;
+wire [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT-1:0]        slv_BID;
 wire [TRANS_WR_RESP_W*SLV_AMT-1:0]       slv_BRESP;
 wire [SLV_AMT-1:0]                       slv_sk_BVALID;
 wire [SLV_AMT-1:0]                       slv_sk_BREADY;
@@ -790,7 +790,7 @@ begin : GEN_DSP_SLV
         //--------------------------------------------------
         // AR Slave Side
         //--------------------------------------------------
-        .s_ARID_o       (slv_ARID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_ARID_o       (slv_ARID[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -: MST_ID_W+TRANS_MST_ID_W]),
         .s_ARADDR_o     (slv_ARADDR[(slv+1)*ADDR_WIDTH-1 -: ADDR_WIDTH]),
         .s_ARBURST_o    (slv_ARBURST[(slv+1)*TRANS_BURST_W-1 -: TRANS_BURST_W]),
         .s_ARLEN_o      (slv_ARLEN[(slv+1)*TRANS_DATA_LEN_W-1 -: TRANS_DATA_LEN_W]),
@@ -810,7 +810,7 @@ begin : GEN_DSP_SLV
         //--------------------------------------------------
         // R Slave Side
         //--------------------------------------------------
-        .s_RID_i        (slv_RID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_RID_i        (slv_RID[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -:MST_ID_W+TRANS_MST_ID_W]),
         .s_RDATA_i      (slv_RDATA[(slv+1)*DATA_WIDTH-1 -: DATA_WIDTH]),
         .s_RRESP_i      (slv_RRESP[(slv+1)*TRANS_WR_RESP_W-1 -: TRANS_WR_RESP_W]),
         .s_RLAST_i      (slv_RLAST[slv]),
@@ -826,7 +826,7 @@ begin : GEN_DSP_SLV
         //--------------------------------------------------
         // AW Slave Side
         //--------------------------------------------------
-        .s_AWID_o       (slv_AWID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_AWID_o       (slv_AWID[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -: MST_ID_W+TRANS_MST_ID_W]),
         .s_AWADDR_o     (slv_AWADDR[(slv+1)*ADDR_WIDTH-1 -: ADDR_WIDTH]),
         .s_AWBURST_o    (slv_AWBURST[(slv+1)*TRANS_BURST_W-1 -: TRANS_BURST_W]),
         .s_AWLEN_o      (slv_AWLEN[(slv+1)*TRANS_DATA_LEN_W-1 -: TRANS_DATA_LEN_W]),
@@ -858,7 +858,7 @@ begin : GEN_DSP_SLV
         //--------------------------------------------------
         // B Slave Side
         //--------------------------------------------------
-        .s_BID_i        (slv_BID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_BID_i        (slv_BID[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -: MST_ID_W+TRANS_MST_ID_W]),
         .s_BRESP_i      (slv_BRESP[(slv+1)*TRANS_WR_RESP_W-1 -: TRANS_WR_RESP_W]),
         
         //--------------------------------------------------
@@ -883,7 +883,7 @@ begin : GEN_SLV_SKID
     slv_side_skid_buffer #(
         .DATA_WIDTH         (DATA_WIDTH),
         .ADDR_WIDTH         (ADDR_WIDTH),
-        .TRANS_MST_ID_W     (TRANS_MST_ID_W),
+        .TRANS_MST_ID_W     (TRANS_MST_ID_W + MST_ID_W),
         .TRANS_BURST_W      (TRANS_BURST_W),
         .TRANS_DATA_LEN_W   (TRANS_DATA_LEN_W),
         .TRANS_DATA_SIZE_W  (TRANS_DATA_SIZE_W),
@@ -903,7 +903,7 @@ begin : GEN_SLV_SKID
         //--------------------------------------------------
 
         //--------------- AR ----------------
-        .dsp_ARID_i         (slv_ARID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .dsp_ARID_i         (slv_ARID[(slv+1)*(TRANS_MST_ID_W+MST_ID_W)-1 -: MST_ID_W+ TRANS_MST_ID_W]),
         .dsp_ARADDR_i       (slv_ARADDR[(slv+1)*ADDR_WIDTH-1 -: ADDR_WIDTH]),
         .dsp_ARBURST_i      (slv_ARBURST[(slv+1)*TRANS_BURST_W-1 -: TRANS_BURST_W]),
         .dsp_ARLEN_i        (slv_ARLEN[(slv+1)*TRANS_DATA_LEN_W-1 -: TRANS_DATA_LEN_W]),
@@ -913,7 +913,7 @@ begin : GEN_SLV_SKID
         .dsp_ARREADY_o      (slv_sk_ARREADY[slv]),
 
         //--------------- AW ----------------
-        .dsp_AWID_i         (slv_AWID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .dsp_AWID_i         (slv_AWID[(slv+1)*(TRANS_MST_ID_W+MST_ID_W)-1 -: MST_ID_W+ TRANS_MST_ID_W]),
         .dsp_AWADDR_i       (slv_AWADDR[(slv+1)*ADDR_WIDTH-1 -: ADDR_WIDTH]),
         .dsp_AWBURST_i      (slv_AWBURST[(slv+1)*TRANS_BURST_W-1 -: TRANS_BURST_W]),
         .dsp_AWLEN_i        (slv_AWLEN[(slv+1)*TRANS_DATA_LEN_W-1 -: TRANS_DATA_LEN_W]),
@@ -929,7 +929,7 @@ begin : GEN_SLV_SKID
         .dsp_WREADY_o       (slv_sk_WREADY[slv]),
 
         //--------------- R -----------------
-        .dsp_RID_o          (slv_RID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .dsp_RID_o          (slv_RID[(slv+1)*(TRANS_MST_ID_W+MST_ID_W)-1 -: MST_ID_W+TRANS_MST_ID_W]),
         .dsp_RDATA_o        (slv_RDATA[(slv+1)*DATA_WIDTH-1 -: DATA_WIDTH]),
         .dsp_RRESP_o        (slv_RRESP[(slv+1)*TRANS_WR_RESP_W-1 -: TRANS_WR_RESP_W]),
         .dsp_RLAST_o        (slv_RLAST[slv]),
@@ -937,7 +937,7 @@ begin : GEN_SLV_SKID
         .dsp_RREADY_i       (slv_sk_RREADY[slv]),
 
         //--------------- B -----------------
-        .dsp_BID_o          (slv_BID[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .dsp_BID_o          (slv_BID[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -:MST_ID_W+ TRANS_MST_ID_W]),
         .dsp_BRESP_o        (slv_BRESP[(slv+1)*TRANS_WR_RESP_W-1 -: TRANS_WR_RESP_W]),
         .dsp_BVALID_o       (slv_sk_BVALID[slv]),
         .dsp_BREADY_i       (slv_sk_BREADY[slv]),
@@ -947,7 +947,7 @@ begin : GEN_SLV_SKID
         //--------------------------------------------------
 
         //--------------- AR ----------------
-        .s_ARID_o           (s_ARID_o[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_ARID_o           (s_ARID_o[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -: MST_ID_W+TRANS_MST_ID_W]),
         .s_ARADDR_o         (s_ARADDR_o[(slv+1)*ADDR_WIDTH-1 -: ADDR_WIDTH]),
         .s_ARBURST_o        (s_ARBURST_o[(slv+1)*TRANS_BURST_W-1 -: TRANS_BURST_W]),
         .s_ARLEN_o          (s_ARLEN_o[(slv+1)*TRANS_DATA_LEN_W-1 -: TRANS_DATA_LEN_W]),
@@ -957,7 +957,7 @@ begin : GEN_SLV_SKID
         .s_ARREADY_i        (s_ARREADY_i[slv]),
 
         //--------------- AW ----------------
-        .s_AWID_o           (s_AWID_o[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_AWID_o           (s_AWID_o[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -: MST_ID_W+TRANS_MST_ID_W]),
         .s_AWADDR_o         (s_AWADDR_o[(slv+1)*ADDR_WIDTH-1 -: ADDR_WIDTH]),
         .s_AWBURST_o        (s_AWBURST_o[(slv+1)*TRANS_BURST_W-1 -: TRANS_BURST_W]),
         .s_AWLEN_o          (s_AWLEN_o[(slv+1)*TRANS_DATA_LEN_W-1 -: TRANS_DATA_LEN_W]),
@@ -973,7 +973,7 @@ begin : GEN_SLV_SKID
         .s_WREADY_i         (s_WREADY_i[slv]),
 
         //--------------- R -----------------
-        .s_RID_i            (s_RID_i[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_RID_i            (s_RID_i[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -: MST_ID_W+TRANS_MST_ID_W]),
         .s_RDATA_i          (s_RDATA_i[(slv+1)*DATA_WIDTH-1 -: DATA_WIDTH]),
         .s_RRESP_i          (s_RRESP_i[(slv+1)*TRANS_WR_RESP_W-1 -: TRANS_WR_RESP_W]),
         .s_RLAST_i          (s_RLAST_i[slv]),
@@ -981,7 +981,7 @@ begin : GEN_SLV_SKID
         .s_RREADY_o         (s_RREADY_o[slv]),
 
         //--------------- B -----------------
-        .s_BID_i            (s_BID_i[(slv+1)*TRANS_MST_ID_W-1 -: TRANS_MST_ID_W]),
+        .s_BID_i            (s_BID_i[(slv+1)*(MST_ID_W+TRANS_MST_ID_W)-1 -:MST_ID_W+TRANS_MST_ID_W]),
         .s_BRESP_i          (s_BRESP_i[(slv+1)*TRANS_WR_RESP_W-1 -: TRANS_WR_RESP_W]),
         .s_BVALID_i         (s_BVALID_i[slv]),
         .s_BREADY_o         (s_BREADY_o[slv])
