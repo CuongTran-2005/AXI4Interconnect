@@ -21,7 +21,7 @@ vlog -sv +incdir+../rtl ../rtl/*.v
 # 4. Compile all Testbench files in the current directory
 echo "--- Compiling Testbench Modules ---"
 vlog -sv +incdir+. ./*.v
-
+vlog -sv +incdir+. ./*.sv
 # 5. Load the top-level testbench for simulation
 # -voptargs=+acc prevents ModelSim from optimizing away internal WDATA/AWVALID signals
 # so your monitor block and waveform viewer can capture them

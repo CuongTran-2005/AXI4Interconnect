@@ -867,6 +867,7 @@ initial begin : main
     delayNs(100);
 
     /* TESTCASE 1: ISSUE ONE WRITE TRANSACTION AND ONE READ TRANSACTION */
+    $display("TESTCASE 1: ONE WRITE TRANSACTION AND ONE READ TRANSACTION");
     // setup master 0 memory
     //masterWriteMemory(1, 0, 32'hAABBCCDD);
     //masterReadMemory(1, 0, 1);
@@ -901,6 +902,7 @@ initial begin : main
     masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd0}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(8));
     join 
     delayNs(1000);
+
     $finish;
 end
 
