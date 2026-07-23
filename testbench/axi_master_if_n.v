@@ -8,7 +8,7 @@
 // Moi loai giao dich (write / read) xu ly tuan tu tung cai mot,
 // khong ho tro outstanding song song trong ban thiet ke nay.
 //=====================================================================
-module axi_master_if #(
+module axi_master_if_n #(
     parameter ID_WIDTH = 4,
     parameter ADDR_WIDTH = 32,    // Toi da tuy vao so luong device va memory
     parameter DATA_WIDTH = 32,    // Toi da 1024

@@ -17,7 +17,7 @@
 // response B/R ve dung Master. Slave chi can echo nguyen ID nhan duoc
 // tren AWID/ARID ra lai BID/RID - module ben duoi lam dung viec nay.
 //=====================================================================
-module axi_slave_if #(
+module axi_slave_if_n #(
     parameter ID_WIDTH   = 4,
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32,
