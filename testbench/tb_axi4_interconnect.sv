@@ -869,47 +869,38 @@ initial begin : main
     /* TESTCASE 1: ISSUE ONE WRITE TRANSACTION AND ONE READ TRANSACTION */
     $display("TESTCASE 1: ONE WRITE TRANSACTION AND ONE READ TRANSACTION");
     // setup master 0 memory
-    masterWriteMemory(0, 0, 32'hAABBCCDD);
-    masterReadMemory(0, 0, 1);
-    masterWriteTransaction(.masterIndex(0), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //masterWriteMemory(1, 0, 32'hAABBCCDD);
+    //masterReadMemory(1, 0, 1);
+    // issue write transaction (master[0] --> slave[0])
+    //masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
+    // issue read transaction (master[0] <-- slave[0])
+    //masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
+
+    
+    /* TESTCASE 2: */
+    masterWriteMemory(1, 0, 32'hAAAAAAAA);
+    masterWriteMemory(1, 1, 32'hAAAA2222);
+    
+    masterWriteMemory(2, 0, 32'hBBBBBBBB);
+    masterWriteMemory(2, 1, 32'hBBBB2222);
     delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
-    masterReadTransaction(.masterIndex(0), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
-    delayNs(1000);
-
-    /* TESTCASE 2: ISSUE TWO WRITE TRANSACTION AT THE SAME TIME */
-    $display("TESTCASE 2: TWO WRITE TRANSACTION AT THE SAME TIME");
-    masterWriteMemory(1, 0, 32'hAABBCCDD);
-    masterReadMemory(1, 0, 1);
-    masterWriteMemory(2, 0, 32'hCCDDEEFF);
-    masterReadMemory(2, 0, 1);
-    fork 
-        begin
-            // master[1] --> slave[1]
-            masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
-        end
-        begin 
-            // master[2] --> slave[1]
-            masterWriteTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd4}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
-        end
-    join
-    delayNs(1000);
-
-    /* TESTCASE 3: ISSUE TWO READ TRANSACTION AT THE SAME TIME */
-    $display("TESTCASE 3: TWO READ TRANSACTION AT THE SAME TIME");
-    fork 
-        begin
-            // master[1] --> slave[1]
-            masterReadTransaction(.masterIndex(0), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
-        end
-        begin 
-            // master[2] --> slave[1]
-            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd4}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
-        end
-    join
+    //masterReadMemory(1, 0, 1);
+    // issue write transaction (master[1] --> slave[1])
+    fork
+    masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    // issue write transaction (master[2] --> slave[1])
+    masterWriteTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd8}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    join  
+    delayNs(SYSTEM_CLOCK_PERIOD/2 * 30);
+    // issue read transaction (master[1] <-- slave[1])
+    fork
+    masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd8}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(8));
+    
+//    delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
+    // issue read transaction (master[2] <-- slave[1])
+    masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd0}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(8));
+    join 
     delayNs(1000);
 
     $finish;

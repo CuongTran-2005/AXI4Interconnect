@@ -28,6 +28,10 @@ module dsp_mst_channel #(
 	 
     input [SLV_ID_W-1:0] 					ctl_slave_id_ar_i,
     input [SLV_ID_W-1:0] 					ctl_slave_id_r_i,
+
+    output [SLV_AMT *TRANS_MST_ID_W -1:0]   ctl_r_trans_mst_id_o,
+    output [SLV_AMT *TRANS_MST_ID_W -1:0]   ctl_b_trans_mst_id_o,
+    
 	//output [ADDR_WIDTH-1:0]                 ctl_ARINFO_o,
     //r, b last
     // output                                  r_last_o;
@@ -359,6 +363,9 @@ begin : R_FIFO_UNPACK
 
 end
 endgenerate
+//r trans id for controler 
+assign ctl_r_trans_mst_id_o = fifo_RID_o;
+
 //instance
 R_dsp_mst_channel #(
     .SLV_AMT            (SLV_AMT),
@@ -500,7 +507,7 @@ begin : B_FIFO_UNPACK
 
 end
 endgenerate
-
+assign ctl_b_trans_mst_id_o = fifo_BID_o;
 //----------------------------------------------------------
 // B Channel MUX
 //
