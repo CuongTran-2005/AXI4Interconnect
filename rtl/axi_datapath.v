@@ -74,7 +74,7 @@ module axi_datapath #(
     input   [SLV_AMT-1:0]                                       s_RVALID_i,
     output  [SLV_AMT-1:0]                                       s_RREADY_o,
     //AW
-    output  [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT -1:0]                       s_AWID_o,
+    output  [(MST_ID_W+TRANS_MST_ID_W)*SLV_AMT -1:0]            s_AWID_o,
     output  [ADDR_WIDTH * SLV_AMT-1:0]                          s_AWADDR_o,
     output  [TRANS_BURST_W * SLV_AMT-1:0]                       s_AWBURST_o,
     output  [TRANS_DATA_LEN_W * SLV_AMT-1:0]                    s_AWLEN_o,
@@ -127,6 +127,8 @@ module axi_datapath #(
 
     output [(TRANS_QOS_W * MST_AMT) * SLV_AMT-1:0]        ctl_slv_AWQOS_o,
 	output [(TRANS_QOS_W * MST_AMT) * SLV_AMT-1:0]        ctl_slv_ARQOS_o,
+
+    output [SLV_AMT-1:0]                                       ctl_slv_wlast_o,
     
     //========signal of fifo====================
     //fifo signal for master dsp
@@ -358,6 +360,7 @@ assign b_trans_mst_id_o = xbar_BID;
 //output to arbiter
 assign r_trans_slv_id_o = slv_RID;
 assign b_trans_slv_id_o = slv_BID;
+assign ctl_slv_wlast_o = slv_WLAST;
 
 
 //==========================================================
