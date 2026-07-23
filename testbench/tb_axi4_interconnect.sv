@@ -869,13 +869,11 @@ initial begin : main
     /* TESTCASE 1: ISSUE ONE WRITE TRANSACTION AND ONE READ TRANSACTION */
     $display("TESTCASE 1: ONE WRITE TRANSACTION AND ONE READ TRANSACTION");
     // setup master 0 memory
-    masterWriteMemory(3, 0, 32'hAABBCCDD);
-    masterReadMemory(3, 0, 1);
-    // issue write transaction (master[0] --> slave[1])
-    masterWriteTransaction(.masterIndex(3), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    masterWriteMemory(0, 0, 32'hAABBCCDD);
+    masterReadMemory(0, 0, 1);
+    masterWriteTransaction(.masterIndex(0), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
     delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
-    // issue read transaction (master[0] <-- slave[1])
-    masterReadTransaction(.masterIndex(3), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
+    masterReadTransaction(.masterIndex(0), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
     delayNs(1000);
 
     /* TESTCASE 2: ISSUE TWO WRITE TRANSACTION AT THE SAME TIME */
@@ -897,6 +895,23 @@ initial begin : main
         end
     join
     delayNs(1000);
+
+    /* TESTCASE 3: ISSUE TWO READ TRANSACTION AT THE SAME TIME */
+    $display("TESTCASE 3: TWO READ TRANSACTION AT THE SAME TIME");
+    fork 
+        begin
+            // master[1] --> slave[1]
+            masterReadTransaction(.masterIndex(0), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
+        end
+        begin 
+            // master[2] --> slave[1]
+            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd4}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
+        end
+    join
+    delayNs(1000);
+
     $finish;
 end
 
