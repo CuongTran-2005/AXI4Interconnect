@@ -166,11 +166,15 @@ module axi4_interconnect #(
     wire [SLV_AMT*MST_AMT-1:0]      aw_fifo_wr_en;
     wire [SLV_AMT*MST_AMT-1:0]      aw_fifo_rd_en;
 
+    wire [MST_AMT * SLV_AMT - 1 : 0] aw_fifo_wr_en_xbar;
+
     //---------------- W FIFO ----------------
     wire [SLV_AMT*MST_AMT-1:0]      w_fifo_full;
     wire [SLV_AMT*MST_AMT-1:0]      w_fifo_empty;
     wire [SLV_AMT*MST_AMT-1:0]      w_fifo_wr_en;
     wire [SLV_AMT*MST_AMT-1:0]      w_fifo_rd_en;
+
+    wire [MST_AMT * SLV_AMT - 1 : 0] w_fifo_wr_en_xbar;
 
     //---------------- AR FIFO ----------------
     wire [SLV_AMT*MST_AMT-1:0]      ar_fifo_full;
@@ -178,17 +182,22 @@ module axi4_interconnect #(
     wire [SLV_AMT*MST_AMT-1:0]      ar_fifo_wr_en;
     wire [SLV_AMT*MST_AMT-1:0]      ar_fifo_rd_en;
 
+    wire [MST_AMT * SLV_AMT - 1 : 0] ar_fifo_wr_en_xbar;
+
     //---------------- B FIFO ----------------
     wire [MST_AMT*SLV_AMT-1:0]      b_fifo_full;
     wire [MST_AMT*SLV_AMT-1:0]      b_fifo_empty;
     wire [MST_AMT*SLV_AMT-1:0]      b_fifo_wr_en;
     wire [MST_AMT*SLV_AMT-1:0]      b_fifo_rd_en;
 
+    wire [MST_AMT * SLV_AMT - 1 : 0] b_fifo_wr_en_xbar;
     //---------------- R FIFO ----------------
     wire [MST_AMT*SLV_AMT-1:0]      r_fifo_full;
     wire [MST_AMT*SLV_AMT-1:0]      r_fifo_empty;
     wire [MST_AMT*SLV_AMT-1:0]      r_fifo_wr_en;
     wire [MST_AMT*SLV_AMT-1:0]      r_fifo_rd_en;
+
+    wire [MST_AMT * SLV_AMT - 1 : 0] r_fifo_wr_en_xbar;
 
     //=====================================================================
     // Master Skid Buffer Control
@@ -384,27 +393,27 @@ module axi4_interconnect #(
         //----------------------------------------------------------------------
         .r_fifo_full_o          (r_fifo_full),
         .r_fifo_empty_o         (r_fifo_empty),
-        .r_fifo_wr_en_i         (r_fifo_wr_en),
+        .r_fifo_wr_en_i         (r_fifo_wr_en_xbar),
         .r_fifo_rd_en_i         (r_fifo_rd_en),
 
         .b_fifo_full_o          (b_fifo_full),
         .b_fifo_empty_o         (b_fifo_empty),
-        .b_fifo_wr_en_i         (b_fifo_wr_en),
+        .b_fifo_wr_en_i         (b_fifo_wr_en_xbar),
         .b_fifo_rd_en_i         (b_fifo_rd_en),
 
         .ar_fifo_full_o         (ar_fifo_full),
         .ar_fifo_empty_o        (ar_fifo_empty),
-        .ar_fifo_wr_en_i        (ar_fifo_wr_en),
+        .ar_fifo_wr_en_i        (ar_fifo_wr_en_xbar),
         .ar_fifo_rd_en_i        (ar_fifo_rd_en),
 
         .aw_fifo_full_o         (aw_fifo_full),
         .aw_fifo_empty_o        (aw_fifo_empty),
-        .aw_fifo_wr_en_i        (aw_fifo_wr_en),
+        .aw_fifo_wr_en_i        (aw_fifo_wr_en_xbar),
         .aw_fifo_rd_en_i        (aw_fifo_rd_en),
 
         .w_fifo_full_o          (w_fifo_full),
         .w_fifo_empty_o         (w_fifo_empty),
-        .w_fifo_wr_en_i         (w_fifo_wr_en),
+        .w_fifo_wr_en_i         (w_fifo_wr_en_xbar),
         .w_fifo_rd_en_i         (w_fifo_rd_en),
 
         //----------------------------------------------------------------------
@@ -607,8 +616,20 @@ module axi4_interconnect #(
 
         end
     endgenerate
+//write fifo en xbar for slv dsp
+genvar mst, slv;
+generate
+    for (slv = 0; slv < SLV_AMT; slv = slv + 1) begin : GEN_SLV
+        for (mst = 0; mst < MST_AMT; mst = mst + 1) begin : GEN_MST
+            assign aw_fifo_wr_en_xbar[slv*MST_AMT + mst] = aw_fifo_wr_en[mst*SLV_AMT + slv];
+            assign ar_fifo_wr_en_xbar[slv*MST_AMT + mst] = ar_fifo_wr_en[mst*SLV_AMT + slv];
+            assign w_fifo_wr_en_xbar[slv*MST_AMT + mst] = w_fifo_wr_en[mst*SLV_AMT + slv];
+        end
+    end
+endgenerate
 
-    //=====================================================================
+
+//=====================================================================
 // Arbiter (One Arbiter per Slave)
 //=====================================================================
     genvar s;
@@ -768,4 +789,13 @@ module axi4_interconnect #(
 
         end
     endgenerate 
+    // write fifo crossbar for master dsp
+    generate
+        for (slv = 0; slv < SLV_AMT; slv = slv + 1) begin : GEN_SLV_M
+            for (mst = 0; mst < MST_AMT; mst = mst + 1) begin : GEN_MST_M
+                assign r_fifo_wr_en_xbar[mst*SLV_AMT + slv] = r_fifo_wr_en[slv*MST_AMT + mst];
+                assign b_fifo_wr_en_xbar[mst*SLV_AMT + slv] = b_fifo_wr_en[slv*MST_AMT + mst];
+            end
+        end
+    endgenerate
 endmodule
