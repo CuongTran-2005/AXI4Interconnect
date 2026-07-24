@@ -867,7 +867,7 @@ initial begin : main
     delayNs(100);
 
     /* TESTCASE 1: ISSUE ONE WRITE TRANSACTION AND ONE READ TRANSACTION */
-    $display("TESTCASE 1: ONE WRITE TRANSACTION AND ONE READ TRANSACTION");
+    //$display("TESTCASE 1: ONE WRITE TRANSACTION AND ONE READ TRANSACTION");
     // setup master 0 memory
     //masterWriteMemory(1, 0, 32'hAABBCCDD);
     //masterReadMemory(1, 0, 1);
@@ -879,6 +879,31 @@ initial begin : main
 
     
     /* TESTCASE 2: */
+//     masterWriteMemory(1, 0, 32'hAAAAAAAA);
+//     masterWriteMemory(1, 1, 32'hAAAA2222);
+    
+//     masterWriteMemory(2, 0, 32'hBBBBBBBB);
+//     masterWriteMemory(2, 1, 32'hBBBB2222);
+//     delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
+//     //masterReadMemory(1, 0, 1);
+//     // issue write transaction (master[1] --> slave[1])
+//     fork
+//     masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+//     // issue write transaction (master[2] --> slave[1])
+//     masterWriteTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd8}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+//     join  
+//     delayNs(SYSTEM_CLOCK_PERIOD/2 * 30);
+//     // issue read transaction (master[1] <-- slave[1])
+//     fork
+//     masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd8}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(8));
+    
+// //    delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
+//     // issue read transaction (master[2] <-- slave[1])
+//     masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd0}}), .transLen(1), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(8));
+//     join 
+    /*testcase 3*/
+
+    //delayNs(1000);
     masterWriteMemory(1, 0, 32'hAAAAAAAA);
     masterWriteMemory(1, 1, 32'hAAAA2222);
     
