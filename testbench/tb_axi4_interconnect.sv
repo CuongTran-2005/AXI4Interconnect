@@ -853,7 +853,7 @@ end
 
 // watchdog timer
 initial begin : watchdog
-    #10000;
+    #1000000;
     $display("TIMEOUT!. The simulation was forced to stop at %d", $time);
     $finish;
 end
@@ -944,6 +944,24 @@ initial begin : main
     slaveWriteMemory(0, 6, 32'haaaa_0007);
     slaveWriteMemory(0, 7, 32'haaaa_0008);
 
+    slaveWriteMemory(1, 0, 32'hbbbb_0001);
+    slaveWriteMemory(1, 1, 32'hbbbb_0002);
+    slaveWriteMemory(1, 2, 32'hbbbb_0003);
+    slaveWriteMemory(1, 3, 32'hbbbb_0004);
+    slaveWriteMemory(1, 4, 32'hbbbb_0005);
+    slaveWriteMemory(1, 5, 32'hbbbb_0006);
+    slaveWriteMemory(1, 6, 32'hbbbb_0007);
+    slaveWriteMemory(1, 7, 32'hbbbb_0008);
+
+    slaveWriteMemory(2, 0, 32'hbbbb_0001);
+    slaveWriteMemory(2, 1, 32'hbbbb_0002);
+    slaveWriteMemory(2, 2, 32'hbbbb_0003);
+    slaveWriteMemory(2, 3, 32'hbbbb_0004);
+    slaveWriteMemory(2, 4, 32'hbbbb_0005);
+    slaveWriteMemory(2, 5, 32'hbbbb_0006);
+    slaveWriteMemory(2, 6, 32'hbbbb_0007);
+    slaveWriteMemory(2, 7, 32'hbbbb_0008);
+
     slaveWriteMemory(3, 0, 32'hbbbb_0001);
     slaveWriteMemory(3, 1, 32'hbbbb_0002);
     slaveWriteMemory(3, 2, 32'hbbbb_0003);
@@ -964,6 +982,28 @@ initial begin : main
         end
     join
     delayNs(10000);
+
+    /* TESTCASE 6 */
+    $display("TESTCASE 6: 4 READ TRANSACTION TO 4 DIFFRENT SLAVE FROM 2 MASTER AT SAME TIME");
+    fork
+        begin
+            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(2), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(2), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(2), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+        end
+        begin
+            masterReadTransaction(.masterIndex(3), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(3), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(3), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(3), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+        
+        end
+    join
+    delayNs(20000);
+
     $finish;
+
+
 end
 endmodule

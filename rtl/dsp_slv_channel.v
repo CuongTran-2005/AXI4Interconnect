@@ -29,6 +29,10 @@ module dsp_slv_channel #(
     input [MST_ID_W-1:0] 					ctl_master_id_ar_i,
     input [MST_ID_W-1:0] 					ctl_master_id_r_i,
 
+    output [TRANS_QOS_W * MST_AMT -1:0]         ctl_slv_AWQOS_o,
+    output [TRANS_QOS_W * MST_AMT -1:0]         ctl_slv_ARQOS_o,
+    
+
     //fifo signal
     output [MST_AMT -1 : 0]                 ar_fifo_full_o,
     output [MST_AMT -1 : 0]                 ar_fifo_empty_o,
@@ -251,6 +255,9 @@ begin : AR_FIFO_UNPACK
 end
 endgenerate
 
+//wire for ARQOS to arbiter
+assign ctl_slv_ARQOS_o = fifo_ARQOS_o;
+    
 // AR channel mux
 
 AR_dsp_slv_channel #(
@@ -370,6 +377,9 @@ begin : AW_FIFO_UNPACK
 
 end
 endgenerate
+//wire for AWQOS arbiter
+assign ctl_slv_AWQOS_o = fifo_AWQOS_o;
+
 // AW channel mux
 AW_dsp_slv_channel #(
     .MST_AMT            (MST_AMT),

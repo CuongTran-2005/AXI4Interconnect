@@ -792,7 +792,10 @@ begin : GEN_DSP_SLV
         .w_fifo_full_o      (w_fifo_full_o[(slv+1)*MST_AMT-1 -: MST_AMT]),
         .w_fifo_empty_o     (w_fifo_empty_o[(slv+1)*MST_AMT-1 -: MST_AMT]),
         .w_fifo_wr_en_i     (w_fifo_wr_en_i[(slv+1)*MST_AMT-1 -: MST_AMT]),
-        .w_fifo_rd_en_i     (w_fifo_rd_en_i[(slv+1)*MST_AMT-1 -: MST_AMT]),        
+        .w_fifo_rd_en_i     (w_fifo_rd_en_i[(slv+1)*MST_AMT-1 -: MST_AMT]),     
+
+        .ctl_slv_AWQOS_o    (ctl_slv_AWQOS_o[(slv+1)*TRANS_QOS_W *MST_AMT-1 -: TRANS_QOS_W *MST_AMT]),
+        .ctl_slv_ARQOS_o    (ctl_slv_ARQOS_o[(slv+1)*TRANS_QOS_W *MST_AMT-1 -: TRANS_QOS_W *MST_AMT]),
         //--------------------------------------------------
         // AR Slave Side
         //--------------------------------------------------
@@ -996,7 +999,7 @@ begin : GEN_SLV_SKID
 end
 endgenerate
 
-assign  ctl_slv_AWQOS_o= xbar_to_slv_AWQOS;
+//assign  ctl_slv_AWQOS_o= xbar_to_slv_AWQOS;
 
-assign  ctl_slv_ARQOS_o= xbar_to_slv_ARQOS;
+//assign  ctl_slv_ARQOS_o= xbar_to_slv_ARQOS;
 endmodule
