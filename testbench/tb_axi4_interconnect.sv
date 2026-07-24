@@ -901,7 +901,7 @@ initial begin : main
     fork 
         begin
             // master[1] --> slave[1]
-            masterReadTransaction(.masterIndex(0), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
         begin 
