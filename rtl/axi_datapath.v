@@ -355,8 +355,8 @@ assign slv_sk_BREADY = ctl_slv_sk_b_ready_i;
 assign ctl_mst_wlast_o = mst_WLAST;
 assign ctl_mst_rlast_o = mst_RLAST;
 
-assign r_trans_mst_id_o = xbar_RID;
-assign b_trans_mst_id_o = xbar_BID;
+//assign r_trans_mst_id_o = xbar_RID;
+//assign b_trans_mst_id_o = xbar_BID;
 //output to arbiter
 assign r_trans_slv_id_o = slv_RID;
 assign b_trans_slv_id_o = slv_BID;
@@ -526,6 +526,9 @@ begin : GEN_DSP_MST
         .ctl_slave_id_b_i   (ctl_slave_id_b_i [(mst+1)*SLV_ID_W-1 -: SLV_ID_W]),
         .ctl_slave_id_ar_i  (ctl_slave_id_ar_i[(mst+1)*SLV_ID_W-1 -: SLV_ID_W]),
         .ctl_slave_id_r_i   (ctl_slave_id_r_i [(mst+1)*SLV_ID_W-1 -: SLV_ID_W]),
+
+        .ctl_r_trans_mst_id_o(r_trans_mst_id_o[(mst+1)*TRANS_MST_ID_W*SLV_AMT -1 -: SLV_AMT*TRANS_MST_ID_W]),
+        .ctl_b_trans_mst_id_o(b_trans_mst_id_o[(mst+1)*TRANS_MST_ID_W*SLV_AMT -1 -: SLV_AMT*TRANS_MST_ID_W]),
 
         .r_fifo_full_o      (r_fifo_full_o[(mst+1)*SLV_AMT-1 -: SLV_AMT]),
         .r_fifo_empty_o     (r_fifo_empty_o[(mst+1)*SLV_AMT-1 -: SLV_AMT]),
