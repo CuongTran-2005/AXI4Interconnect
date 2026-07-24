@@ -46,3 +46,4 @@ vsim.dbg
 modelsim.ini
 
 tb_axi4_interconnect.sv
+dump.vcd
