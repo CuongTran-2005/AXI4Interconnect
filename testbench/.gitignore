@@ -44,3 +44,5 @@ vsim.dbg
 # Uncomment the line below if modelsim.ini is auto-generated locally 
 # and not customized/tracked for the project:
 modelsim.ini
+
+tb_axi4_interconnect.sv
