@@ -43,13 +43,20 @@ module interrupt_controller
 
     wire [SLV_ID_W-1:0] arb_irq_id;
 
+    wire [SLV_AMT-1:0] selected;
+    reg interupt_done;
+    wire [SLV_AMT-1:0] controler_free;
+    wire [SLV_ID_W*SLV_AMT-1:0] counter_block;
+
     //-------------------------------------------------
     // FSM
     //-------------------------------------------------
 
     localparam IDLE   = 2'd0;
-	 localparam ASSERT_IRQ = 2'd1;
+	localparam ASSERT_IRQ = 2'd1;
     localparam WAIT_RELEASE = 2'd2;
+    localparam DONE = 2'd3;
+    
 
     reg [1:0] state;
 
@@ -75,9 +82,44 @@ module interrupt_controller
     //-------------------------------------------------
     // Enable Mask
     //-------------------------------------------------
+    genvar i;
 
+    generate
+        for (i = 0; i < SLV_AMT; i = i + 1) begin : GEN_RR_MASK
 
-    assign masked_irq = pending_irq & irq_en_i;
+            round_robin_masked_irq #(
+                .SLV_AMT    (SLV_AMT),
+                .SLV_ID_W   (SLV_ID_W),
+                .PRIORITY_W (PRIORITY_W)                    //fixed
+            ) u_round_robin_masked_irq (
+                .clk               (clk_i),
+                .rst_n             (rst_n_i),
+
+                .pending_irq_i     (pending_irq[i]), //wire da co
+                .irq_en_i          (irq_en_i[i]), //wire da co
+                .selected_i        (selected[i]), //wire da co
+                //.selected_en_i     (),
+                .interupt_done_i   (interupt_done), //da co
+                .controler_free_i  (controler_free[i]), 
+
+                .counter_block_o   (counter_block[i]),
+                .masked_irq_o      (masked_irq[i]) //daco
+            );
+
+        end
+    endgenerate
+// free select
+    controller_free_select #(
+        .SLV_AMT  (SLV_AMT),
+        .SLV_ID_W (SLV_ID_W)
+    ) u_controller_free_select (
+        .counter_block   (counter_block),
+        .masked_irq      (masked_irq),
+        .pending_irq     (pending_irq & irq_en_i),
+
+        .controler_free  (controler_free)
+    );
+    //assign masked_irq = pending_irq & irq_en_i;
     //-------------------------------------------------
     // Priority Arbiter
     //-------------------------------------------------
@@ -99,6 +141,11 @@ module interrupt_controller
         .irq_slv_id_o(arb_irq_id)
     );
 
+    generate
+        for (i = 0; i < SLV_AMT; i = i + 1) begin : GEN_DECODER_SELECT
+            assign selected[i] = (arb_irq_id == i) & irq_o;
+        end
+    endgenerate
     //-------------------------------------------------
     // FSM
     //-------------------------------------------------
@@ -110,6 +157,7 @@ module interrupt_controller
             state    <= IDLE;
             irq_o    <= 1'b0;
             irq_id_o <= {SLV_ID_W{1'b0}};
+            interupt_done <= 1'b0;
         end
         else
         begin
@@ -127,6 +175,7 @@ module interrupt_controller
 
                 if(arb_irq_valid)
                 begin
+                    interupt_done <=1'b0;
                     irq_o    <= 1'b1;
                     irq_id_o <= arb_irq_id;
                     state    <= ASSERT_IRQ;
@@ -150,18 +199,24 @@ module interrupt_controller
 
             end
 				
-				//-----------------------------------------
+			//-----------------------------------------
             // WAIT_RELEASE
             //-----------------------------------------
-				WAIT_RELEASE:
-				begin
-					irq_o <=1'b0;
-					if (irq_i[arb_irq_id] == 0)
-						begin
-							state <= IDLE;
-						end
-					
-				end
+            WAIT_RELEASE:
+            begin
+                irq_o <=1'b0;
+                if (irq_i[arb_irq_id] == 0)
+                    begin
+                        interupt_done <=1'b1;
+                        state <= DONE;
+                    end
+            end
+
+            DONE:
+            begin
+                interupt_done <=1'b0;
+                state <=IDLE;
+            end
 				
 				default : state <=IDLE;
             endcase

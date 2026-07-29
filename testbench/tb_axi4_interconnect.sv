@@ -1001,6 +1001,24 @@ initial begin : main
         end
     join
     delayNs(20000);
+    /* TESTCASE 7 */
+    $display("TESTCASE 7: CHANGE PARAMETER SLAVE NUM AND MASTER NUM");
+    fork
+        begin
+            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(2), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(2), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(2), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+        end
+        begin
+            masterReadTransaction(.masterIndex(3), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(3), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(3), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(3), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+        
+        end
+    join
+    delayNs(20000);
 
     $finish;
 
