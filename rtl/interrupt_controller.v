@@ -102,7 +102,7 @@ module interrupt_controller
                 .interupt_done_i   (interupt_done), //da co
                 .controler_free_i  (controler_free[i]), 
 
-                .counter_block_o   (counter_block[i]),
+                .counter_block_o   (counter_block[i * SLV_ID_W +: SLV_ID_W]),
                 .masked_irq_o      (masked_irq[i]) //daco
             );
 
@@ -132,7 +132,7 @@ module interrupt_controller
     )
     u_arbiter_priority_irq
     (
-        .masked_irq_i(masked_irq),
+        .masked_irq_i(masked_irq | controler_free),
 
         .priority_i(priority_i),
 
@@ -143,7 +143,7 @@ module interrupt_controller
 
     generate
         for (i = 0; i < SLV_AMT; i = i + 1) begin : GEN_DECODER_SELECT
-            assign selected[i] = (arb_irq_id == i) & irq_o;
+            assign selected[i] = (irq_id_o == i) & irq_o;
         end
     endgenerate
     //-------------------------------------------------
@@ -205,7 +205,7 @@ module interrupt_controller
             WAIT_RELEASE:
             begin
                 irq_o <=1'b0;
-                if (irq_i[arb_irq_id] == 0)
+                if (irq_i[irq_id_o] == 0)
                     begin
                         interupt_done <=1'b1;
                         state <= DONE;

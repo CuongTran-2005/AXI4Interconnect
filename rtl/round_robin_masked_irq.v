@@ -26,7 +26,7 @@ module round_robin_masked_irq
     localparam BLOCK      = 2'b10;
 
     reg [1:0] state_r;
-    reg [1:0] state_n;
+    
 
     //--------------------------------------------------------------
     // Counter
@@ -38,7 +38,6 @@ module round_robin_masked_irq
     // counter needs 3 bits to represent 0..4
     //--------------------------------------------------------------
     reg [SLV_ID_W-1:0] counter_r;
-    reg [SLV_ID_W-1:0] counter_n;
 
     //--------------------------------------------------------------
     // Output
@@ -47,116 +46,105 @@ module round_robin_masked_irq
 
     assign masked_irq_o =   (state_r == BYPASS) ? (pending_irq_i & irq_en_i) :
                             (state_r == PROCESSING) ? 1'b1 : 1'b0;
+                            //(state_r == BLOCK && controler_free_i == 1'b1)? (pending_irq_i & irq_en_i): 1'b0;
 
 
     //--------------------------------------------------------------
     // State and counter sequential logic
     //--------------------------------------------------------------
-    always @(posedge clk or negedge rst_n) begin
-
-        if (!rst_n) begin
-            state_r   <= BYPASS;
-            counter_r <= {(SLV_ID_W+1){1'b0}};
-        end
-
-        else begin
-            state_r   <= state_n;
-            counter_r <= counter_n;
-        end
-
-    end
 
 
     //--------------------------------------------------------------
     // FSM next-state and counter logic
     //--------------------------------------------------------------
-    always @(*) begin
+    always @(posedge clk or negedge rst_n) begin
 
-        // Default: hold current values
-        state_n   = state_r;
-        counter_n = counter_r;
+        if (!rst_n) begin
+            state_r   <= BYPASS;
+            counter_r <= {(SLV_ID_W){1'b0}};
+        end
+        else
+        begin
+            case (state_r)
 
-        case (state_r)
+                //----------------------------------------------------------
+                // BYPASS
+                //
+                // Interrupt is allowed to enter arbiter.
+                //----------------------------------------------------------
+                BYPASS: begin
 
-            //----------------------------------------------------------
-            // BYPASS
-            //
-            // Interrupt is allowed to enter arbiter.
-            //----------------------------------------------------------
-            BYPASS: begin
-
-                if (selected_i) begin
-                    state_n = PROCESSING;
-                end
-
-            end
-
-
-            //----------------------------------------------------------
-            // PROCESSING
-            //
-            // Current slave is being serviced.
-            // Do not allow this slave to be selected again until
-            // its interrupt is completed.
-            //----------------------------------------------------------
-            PROCESSING: begin
-
-                if (interupt_done_i) begin
-
-                    // Current interrupt has completed.
-                    // Start blocking this slave.
-                    counter_n = {{SLV_ID_W{1'b0}}};
-                    state_n   = BLOCK;
-
-                end
-
-            end
-
-
-            //----------------------------------------------------------
-            // BLOCK
-            //
-            // Current slave is temporarily excluded from arbitration.
-            //----------------------------------------------------------
-            BLOCK: begin
-
-                // Controller has no other interrupt to process.
-                // Allow this slave to participate again immediately.
-                if (controler_free_i) begin
-
-                    counter_n = {{SLV_ID_W{1'b0}}, 1'b0};
-                    state_n   = BYPASS;
-
-                end
-                else if (interupt_done_i) begin
-                    // One arbitration opportunity has passed.
-                    if (counter_r >= SLV_AMT - 1) begin
-
-                        // SLV_AMT arbitration opportunities completed.
-                        counter_n = {{SLV_ID_W{1'b0}}, 1'b0};
-                        state_n   = BYPASS;
-
-                    end
-
-                    else begin
-
-                        counter_n = counter_r + 1'b1;
+                    if (selected_i) begin
+                        state_r <= PROCESSING;
                     end
 
                 end
 
-            end
+
+                //----------------------------------------------------------
+                // PROCESSING
+                //
+                // Current slave is being serviced.
+                // Do not allow this slave to be selected again until
+                // its interrupt is completed.
+                //----------------------------------------------------------
+                PROCESSING: begin
+
+                    if (interupt_done_i) begin
+
+                        // Current interrupt has completed.
+                        // Start blocking this slave.
+                        counter_r <= {{SLV_ID_W{1'b0}}};
+                        state_r   <= BLOCK;
+
+                    end
+
+                end
 
 
-            //----------------------------------------------------------
-            // Default
-            //----------------------------------------------------------
-            default: begin
-                state_n   = BYPASS;
-                counter_n = {(SLV_ID_W+1){1'b0}};
-            end
+                //----------------------------------------------------------
+                // BLOCK
+                //
+                // Current slave is temporarily excluded from arbitration.
+                //----------------------------------------------------------
+                BLOCK: begin
 
-        endcase
+                    // Controller has no other interrupt to process.
+                    // Allow this slave to participate again immediately.
+                    if (controler_free_i) begin
+
+                        counter_r <= {{SLV_ID_W{1'b0}}};
+                        state_r   <= BYPASS;
+
+                    end
+                    else if (interupt_done_i) begin
+                        // One arbitration opportunity has passed.
+                        if (counter_r >= SLV_AMT - 1) begin
+
+                            // SLV_AMT arbitration opportunities completed.
+                            counter_r <= {{SLV_ID_W{1'b0}}};
+                            state_r   <= BYPASS;
+
+                        end
+                        else begin
+                            counter_r <= counter_r + 1'b1;
+                        end
+
+                    end
+
+                end
+
+
+                //----------------------------------------------------------
+                // Default
+                //----------------------------------------------------------
+                default: begin
+                    state_r   <= BYPASS;
+                    counter_r <= {(SLV_ID_W){1'b0}};
+                end
+
+            endcase
+        end
 
     end
 
