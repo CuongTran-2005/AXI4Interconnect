@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 module sc_fifo_lookahead #(
-    parameter DATA_WIDTH = 8,  // Width of the data bus
-    parameter ADDR_WIDTH = 4   // Depth of FIFO is 2^ADDR_WIDTH
+    parameter DATA_WIDTH = 120,  // Width of the data bus
+    parameter ADDR_WIDTH = 5   // Depth of FIFO is 2^ADDR_WIDTH
 )(
     input  wire                  clk,
     input  wire                  rst_n,

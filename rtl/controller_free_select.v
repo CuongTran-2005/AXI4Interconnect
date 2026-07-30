@@ -2,7 +2,7 @@ module controller_free_select #(
     parameter SLV_AMT  = 4,
     parameter SLV_ID_W = (SLV_AMT > 1) ? $clog2(SLV_AMT) : 1
 )(
-    input wire [SLV_ID_W*SLV_AMT-1:0] counter_block,
+    input wire [(1+SLV_ID_W)*SLV_AMT-1:0] counter_block,
     input wire [SLV_AMT-1:0]         masked_irq,
     input wire [SLV_AMT-1:0]         pending_irq,
     output reg [SLV_AMT-1:0]         controler_free
@@ -10,8 +10,8 @@ module controller_free_select #(
 
     integer i;
 
-    reg [SLV_ID_W-1:0] max_counter;
-    reg [SLV_ID_W-1:0] counter_tmp;
+    reg [SLV_ID_W:0] max_counter;
+    reg [SLV_ID_W:0] counter_tmp;
     reg                 masked_irq_exist;
 
     always @(*) begin
@@ -20,8 +20,8 @@ module controller_free_select #(
         // Default
         //----------------------------------------------------------
         controler_free   = {SLV_AMT{1'b0}};
-        max_counter      = {SLV_ID_W{1'b0}};
-        counter_tmp      = {SLV_ID_W{1'b0}};
+        max_counter      = {{SLV_ID_W{1'b0}},1'b1};
+        counter_tmp      = {(SLV_ID_W+1){1'b0}};
         masked_irq_exist = 1'b0;
 
 
@@ -29,10 +29,8 @@ module controller_free_select #(
         // Check whether any masked IRQ is active
         //----------------------------------------------------------
         for (i = 0; i < SLV_AMT; i = i + 1) begin
-
             if (masked_irq[i])
                 masked_irq_exist = 1'b1;
-
         end
 
 
@@ -48,7 +46,7 @@ module controller_free_select #(
 
                     // Extract counter of slave i
                     counter_tmp = counter_block[
-                        i*SLV_ID_W +: SLV_ID_W
+                        i*(1+SLV_ID_W) +: 1+SLV_ID_W
                     ];
 
                     if (counter_tmp >= max_counter) begin

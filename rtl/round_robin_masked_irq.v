@@ -14,8 +14,8 @@ module round_robin_masked_irq
     input wire      interupt_done_i,
     input wire      controler_free_i,
     
-    output [SLV_ID_W -1:0]  counter_block_o,
-    output          masked_irq_o
+    output [SLV_ID_W :0]  counter_block_o,
+    output reg         masked_irq_o
 );
 
     //--------------------------------------------------------------
@@ -37,16 +37,16 @@ module round_robin_masked_irq
     // SLV_ID_W = 2
     // counter needs 3 bits to represent 0..4
     //--------------------------------------------------------------
-    reg [SLV_ID_W-1:0] counter_r;
+    reg [SLV_ID_W:0] counter_r;
 
     //--------------------------------------------------------------
     // Output
     //--------------------------------------------------------------
-    assign counter_block_o = counter_r[SLV_ID_W-1:0];
+    assign counter_block_o = counter_r[SLV_ID_W:0];
 
-    assign masked_irq_o =   (state_r == BYPASS) ? (pending_irq_i & irq_en_i) :
-                            (state_r == PROCESSING) ? 1'b1 : 1'b0;
-                            //(state_r == BLOCK && controler_free_i == 1'b1)? (pending_irq_i & irq_en_i): 1'b0;
+    // assign masked_irq_o =   (state_r == BYPASS) ? (pending_irq_i & irq_en_i) :
+    //                         (state_r == PROCESSING) ? 1'b1 : 1'b0;
+    //                         //(state_r == BLOCK && controler_free_i == 1'b1)? (pending_irq_i & irq_en_i): 1'b0;
 
 
     //--------------------------------------------------------------
@@ -73,9 +73,14 @@ module round_robin_masked_irq
                 // Interrupt is allowed to enter arbiter.
                 //----------------------------------------------------------
                 BYPASS: begin
-
+                    
                     if (selected_i) begin
                         state_r <= PROCESSING;
+                        masked_irq_o <=1'b1;
+                    end 
+                    else
+                    begin
+                        masked_irq_o <= pending_irq_i & irq_en_i;
                     end
 
                 end
@@ -89,18 +94,20 @@ module round_robin_masked_irq
                 // its interrupt is completed.
                 //----------------------------------------------------------
                 PROCESSING: begin
-
+                    
                     if (interupt_done_i) begin
 
                         // Current interrupt has completed.
                         // Start blocking this slave.
-                        counter_r <= {{SLV_ID_W{1'b0}}};
+                        counter_r <= {{SLV_ID_W{1'b0}},1'b1};
                         state_r   <= BLOCK;
-
+                        masked_irq_o <=1'b0;
                     end
-
+                    else
+                    begin
+                        masked_irq_o <=1'b1;
+                    end
                 end
-
 
                 //----------------------------------------------------------
                 // BLOCK
@@ -111,22 +118,24 @@ module round_robin_masked_irq
 
                     // Controller has no other interrupt to process.
                     // Allow this slave to participate again immediately.
-                    if (controler_free_i) begin
+                    if (controler_free_i && selected_i) begin
 
-                        counter_r <= {{SLV_ID_W{1'b0}}};
+                        counter_r <= {{(SLV_ID_W+1){1'b0}}};
                         state_r   <= BYPASS;
-
+                        masked_irq_o <=pending_irq_i & irq_en_i;
                     end
                     else if (interupt_done_i) begin
                         // One arbitration opportunity has passed.
-                        if (counter_r >= SLV_AMT - 1) begin
+                        if (counter_r >= SLV_AMT-1) begin
 
                             // SLV_AMT arbitration opportunities completed.
-                            counter_r <= {{SLV_ID_W{1'b0}}};
+                            counter_r <= {{(SLV_ID_W+1){1'b0}}};
                             state_r   <= BYPASS;
+                            masked_irq_o <=pending_irq_i & irq_en_i;
 
                         end
                         else begin
+                            masked_irq_o <=1'b0;
                             counter_r <= counter_r + 1'b1;
                         end
 

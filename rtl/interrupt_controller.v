@@ -34,6 +34,29 @@ module interrupt_controller
     //-------------------------------------------------
     // Internal Signals
     //-------------------------------------------------
+    reg [SLV_AMT-1:0]               irq_en_r;
+    reg [SLV_AMT*PRIORITY_W-1:0]    priority_r;
+    wire                             irq_ack_r;
+
+    //assign irq_en_r =irq_en_i;
+    assign irq_ack_r = irq_ack_i;
+    //assign priority_r = priority_i;
+
+    always @(posedge clk_i or negedge rst_n_i)
+    begin
+        if (!rst_n_i)
+        begin
+            irq_en_r <=0;
+            //irq_ack_r <= 0;
+            priority_r <= 0;
+
+        end else
+        begin
+            irq_en_r <=irq_en_i;
+            //irq_ack_r <= irq_ack_i;
+            priority_r <= priority_i;
+        end
+    end
 
     wire [SLV_AMT-1:0] pending_irq;
 
@@ -43,7 +66,7 @@ module interrupt_controller
 
     wire [SLV_ID_W-1:0] arb_irq_id;
 
-    wire [SLV_AMT-1:0] selected;
+    reg [SLV_AMT-1:0] selected;
     reg interupt_done;
     wire [SLV_AMT-1:0] controler_free;
     wire [SLV_ID_W*SLV_AMT-1:0] counter_block;
@@ -95,8 +118,8 @@ module interrupt_controller
                 .clk               (clk_i),
                 .rst_n             (rst_n_i),
 
-                .pending_irq_i     (pending_irq[i]), //wire da co
-                .irq_en_i          (irq_en_i[i]), //wire da co
+                .pending_irq_i     (irq_i[i]), //wire da co
+                .irq_en_i          (irq_en_r[i]), //wire da co
                 .selected_i        (selected[i]), //wire da co
                 //.selected_en_i     (),
                 .interupt_done_i   (interupt_done), //da co
@@ -115,7 +138,7 @@ module interrupt_controller
     ) u_controller_free_select (
         .counter_block   (counter_block),
         .masked_irq      (masked_irq),
-        .pending_irq     (pending_irq & irq_en_i),
+        .pending_irq     (pending_irq & irq_en_r),
 
         .controler_free  (controler_free)
     );
@@ -134,18 +157,18 @@ module interrupt_controller
     (
         .masked_irq_i(masked_irq | controler_free),
 
-        .priority_i(priority_i),
+        .priority_i(priority_r),
 
         .irq_valid_o(arb_irq_valid),
 
         .irq_slv_id_o(arb_irq_id)
     );
 
-    generate
-        for (i = 0; i < SLV_AMT; i = i + 1) begin : GEN_DECODER_SELECT
-            assign selected[i] = (irq_id_o == i) & irq_o & irq_ack_i;
-        end
-    endgenerate
+    // generate
+    //     for (i = 0; i < SLV_AMT; i = i + 1) begin : GEN_DECODER_SELECT
+    //         assign selected[i] = (irq_id_o == i) & irq_o & irq_ack_i;
+    //     end
+    // endgenerate
     //-------------------------------------------------
     // FSM
     //-------------------------------------------------
@@ -172,10 +195,9 @@ module interrupt_controller
             begin
 
                 irq_o <= 1'b0;
-
+                interupt_done <=1'b0;
                 if(arb_irq_valid)
                 begin
-                    interupt_done <=1'b0;
                     irq_o    <= 1'b1;
                     irq_id_o <= arb_irq_id;
                     state    <= ASSERT_IRQ;
@@ -191,9 +213,10 @@ module interrupt_controller
             begin
                 irq_o <= 1'b1;
                 irq_id_o <= arb_irq_id;
-                if(irq_ack_i)
+                if(irq_ack_r)
                 begin
                     irq_o <= 1'b0;
+                    selected [irq_id_o] <=1'b1;
                     state <= WAIT_RELEASE;
                 end
 
@@ -205,6 +228,7 @@ module interrupt_controller
             WAIT_RELEASE:
             begin
                 irq_o <=1'b0;
+                selected <=4'b0;
                 if (irq_i[irq_id_o] == 0)
                     begin
                         interupt_done <=1'b1;

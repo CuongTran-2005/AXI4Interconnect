@@ -44,5 +44,5 @@ module irq_pending
     end
 
     assign pending_o = pending_r;
-
+    //assign pending_o =irq_i;
 endmodule
