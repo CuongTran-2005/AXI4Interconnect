@@ -143,7 +143,7 @@ module interrupt_controller
 
     generate
         for (i = 0; i < SLV_AMT; i = i + 1) begin : GEN_DECODER_SELECT
-            assign selected[i] = (irq_id_o == i) & irq_o;
+            assign selected[i] = (irq_id_o == i) & irq_o & irq_ack_i;
         end
     endgenerate
     //-------------------------------------------------
@@ -189,8 +189,8 @@ module interrupt_controller
 
             ASSERT_IRQ:
             begin
-
                 irq_o <= 1'b1;
+                irq_id_o <= arb_irq_id;
                 if(irq_ack_i)
                 begin
                     irq_o <= 1'b0;

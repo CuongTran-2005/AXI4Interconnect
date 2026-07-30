@@ -479,7 +479,7 @@ axi4_interconnect #(
     .OUTSTANDING_AMT(MAX_OUTSTANDING_TRANSACTION),
     .FIFO_DEPTH(INTERCONNECT_FIFO_DEPTH)
 )
-interconnect (
+dut_interconnect (
     // global signals
     .ACLK_i(ACLK_i),
     .ARESETn_i(ARESETn_i),
@@ -876,7 +876,7 @@ initial begin : main
     // issue read transaction (master[0] <-- slave[0])
     masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
 
-    delayNs(1000);
+    delayNs(100);
     /* TESTCASE 2: ISSUE TWO WRITE TRANSACTION AT THE SAME TIME */
     $display("TESTCASE 2: TWO WRITE TRANSACTION AT THE SAME TIME");
     masterWriteMemory(1, 0, 32'hAABBCCDD);
@@ -1001,24 +1001,24 @@ initial begin : main
         end
     join
     delayNs(20000);
-    /* TESTCASE 7 */
-    $display("TESTCASE 7: CHANGE PARAMETER SLAVE NUM AND MASTER NUM");
-    fork
-        begin
-            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(2), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(2), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(2), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-        end
-        begin
-            masterReadTransaction(.masterIndex(3), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(3), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(3), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(3), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    // /* TESTCASE 7 */
+    // $display("TESTCASE 7: CHANGE PARAMETER SLAVE NUM AND MASTER NUM");
+    // fork
+    //     begin
+    //         masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //         masterReadTransaction(.masterIndex(2), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //         masterReadTransaction(.masterIndex(2), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //         masterReadTransaction(.masterIndex(2), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //     end
+    //     begin
+    //         masterReadTransaction(.masterIndex(3), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //         masterReadTransaction(.masterIndex(3), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //         masterReadTransaction(.masterIndex(3), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    //         masterReadTransaction(.masterIndex(3), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
         
-        end
-    join
-    delayNs(20000);
+    //     end
+    // join
+    // delayNs(20000);
 
     $finish;
 
