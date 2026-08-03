@@ -302,14 +302,16 @@ for(r_idx = 0; r_idx < SLV_AMT; r_idx = r_idx + 1)
 begin : R_FIFO_GEN
     fifo #(
         .DATA_WIDTH(R_FIFO_WIDTH),
-        .FIFO_DEPTH(FIFO_DEPTH)
+        //.FIFO_DEPTH(FIFO_DEPTH)
+        .DEPTH(FIFO_DEPTH),
+        .ADDR_WIDTH($clog2(FIFO_DEPTH))
     ) u_R_fifo (
         .clk        (ACLK_i),
         .rst_n      (ARESETn_i),
         //---------------------------------
         // Push từ Slave
         //---------------------------------
-        .data_i(
+        .din(
             {
 				sa_RID_i  [r_idx * TRANS_MST_ID_W +: TRANS_MST_ID_W],
                 sa_RDATA_i[r_idx * DATA_WIDTH +:DATA_WIDTH],
@@ -317,7 +319,7 @@ begin : R_FIFO_GEN
                 sa_RLAST_i[r_idx]
             }
         ),
-        .wr_valid_i(
+        .wr_en(
 				//sa_RVALID_i[r_idx] & sa_RREADY_o [r_idx] //~r_fifo_full[r_idx] //check lai wr va rd
 				r_fifo_wr_en[r_idx]
         ),
@@ -325,18 +327,20 @@ begin : R_FIFO_GEN
         //---------------------------------
         // Pop bởi R_dsp_mst_channel
         //---------------------------------
-        .rd_valid_i(
+        .rd_en(
             //fifo_RVALID_o [r_idx] & fifo_RREADY_i [r_idx]
 				r_fifo_rd_en[r_idx] 
         ),
-        .data_o(
+        .dout(
             r_fifo_data_o[r_idx]
         ),
         .empty_o          (r_fifo_empty[r_idx]),
         .full_o           (r_fifo_full[r_idx]),
-        .almost_empty_o   (),
-        .almost_full_o    (),
-        .counter          ()
+        // .almost_empty_o   (),
+        // .almost_full_o    (),
+        // .counter          ()
+        .wr_rst_busy(),
+        .rd_rst_busy()
     );
 
 end
@@ -428,7 +432,9 @@ begin : B_FIFO_GEN
 
     fifo #(
         .DATA_WIDTH(B_FIFO_WIDTH),
-        .FIFO_DEPTH(FIFO_DEPTH)
+        //.FIFO_DEPTH(FIFO_DEPTH)
+        .DEPTH(FIFO_DEPTH),
+        .ADDR_WIDTH($clog2(FIFO_DEPTH))
     ) u_B_fifo (
 
         .clk        (ACLK_i),
@@ -438,7 +444,7 @@ begin : B_FIFO_GEN
         // Push from Slave
         //--------------------------------------------------
 
-        .data_i(
+        .din(
             {
                 sa_BID_i[
                     b_idx*TRANS_MST_ID_W +:
@@ -452,7 +458,7 @@ begin : B_FIFO_GEN
             }
         ),
 
-        .wr_valid_i(
+        .wr_en(
             b_fifo_wr_en[b_idx]
         ),
 
@@ -460,19 +466,21 @@ begin : B_FIFO_GEN
         // Pop by B_dsp_mst_channel
         //--------------------------------------------------
 
-        .rd_valid_i(
+        .rd_en(
             b_fifo_rd_en[b_idx]
         ),
 
-        .data_o(
+        .dout(
             b_fifo_data_o[b_idx]
         ),
 
         .empty_o          (b_fifo_empty[b_idx]),
         .full_o           (b_fifo_full[b_idx]),
-        .almost_empty_o   (),
-        .almost_full_o    (),
-        .counter          ()
+        // .almost_empty_o   (),
+        // .almost_full_o    (),
+        // .counter          ()
+        .wr_rst_busy(),
+        .rd_rst_busy()
     );
 
 end

@@ -8,10 +8,10 @@ parameter SYSTEM_CLOCK_PERIOD               = 20; // nanoseconds
 // ==========================================
 // INTERCONNECT PARAMETERS 
 // ==========================================
-parameter MASTER_NUM                        = 4;
-parameter SLAVE_NUM                         = 4;
+parameter MASTER_NUM                        = 2;
+parameter SLAVE_NUM                         = 2;
 parameter TRANSACTION_MASTER_ID_WIDTH       = 4;
-parameter TRANSACTION_SLAVE_ID_WIDTH        = 6;
+parameter TRANSACTION_SLAVE_ID_WIDTH        = 5;
 parameter TRANSACTION_QOS_WIDTH             = 4;
 parameter TRANSACTION_LEN_WIDTH             = 8;
 parameter TRANSACTION_SIZE_WIDTH            = 3;
@@ -871,25 +871,25 @@ initial begin : main
     // setup master 0 memory
     masterWriteMemory(1, 0, 32'hAABBCCDD);
     // issue write transaction (master[0] --> slave[0])
-    masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+    masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({1, {31'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
     delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
     // issue read transaction (master[0] <-- slave[0])
-    masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
+    masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({1, {31'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
 
     delayNs(100);
     /* TESTCASE 2: ISSUE TWO WRITE TRANSACTION AT THE SAME TIME */
     $display("TESTCASE 2: TWO WRITE TRANSACTION AT THE SAME TIME");
     masterWriteMemory(1, 0, 32'hAABBCCDD);
-    masterWriteMemory(2, 0, 32'hCCDDEEFF);
+    masterWriteMemory(0, 0, 32'hCCDDEEFF);
     fork 
         begin
             // master[1] --> slave[1]
-            masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({1, {31'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
         begin 
             // master[2] --> slave[1]
-            masterWriteTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd4}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterWriteTransaction(.masterIndex(0), .transID(0), .transAddr({1, {31'd4}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
     join
@@ -900,12 +900,12 @@ initial begin : main
     fork 
         begin
             // master[1] --> slave[1]
-            masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({01, {30'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({1, {31'd0}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
         begin 
             // master[2] --> slave[1]
-            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({01, {30'd4}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(0), .transID(0), .transAddr({1, {31'd4}}), .transLen(0), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
     join
@@ -913,21 +913,21 @@ initial begin : main
 
     /* TESTCASE 4*/
     $display("TESTCASE 4: TWO WRITE TRANSACTION AT THE SAME TIME WITH DIFFERENT QOS");
-    masterWriteMemory(2, 4, 32'h1111_1111);
-    masterWriteMemory(2, 5, 32'h1111_2222);
-    masterWriteMemory(2, 6, 32'h1111_3333);
-    masterWriteMemory(2, 7, 32'h1111_4444);
-    masterWriteMemory(3, 4, 32'h2222_1111);
-    masterWriteMemory(3, 5, 32'h2222_2222);
-    masterWriteMemory(3, 6, 32'h2222_3333);
-    masterWriteMemory(3, 7, 32'h2222_4444);
+    // masterWriteMemory(2, 4, 32'h1111_1111);
+    // masterWriteMemory(2, 5, 32'h1111_2222);
+    // masterWriteMemory(2, 6, 32'h1111_3333);
+    // masterWriteMemory(2, 7, 32'h1111_4444);
+    // masterWriteMemory(3, 4, 32'h2222_1111);
+    // masterWriteMemory(3, 5, 32'h2222_2222);
+    // masterWriteMemory(3, 6, 32'h2222_3333);
+    // masterWriteMemory(3, 7, 32'h2222_4444);
     fork
         begin
-            masterWriteTransaction(.masterIndex(2), .transID(0), .transAddr(32'h4000_0000), .transLen(3), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
+            masterWriteTransaction(.masterIndex(1), .transID(0), .transAddr({1, {31'd4}}), .transLen(3), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(4));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
         begin 
-            masterWriteTransaction(.masterIndex(3), .transID(1), .transAddr(32'h4000_0004), .transLen(3), .transSize(3'd2), .transBurst(2'd1), .transQoS(4), .memAddr(4));
+            masterWriteTransaction(.masterIndex(0), .transID(1), .transAddr({1, {31'd8}}), .transLen(3), .transSize(3'd2), .transBurst(2'd1), .transQoS(4), .memAddr(4));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
     join
@@ -953,31 +953,31 @@ initial begin : main
     slaveWriteMemory(1, 6, 32'hbbbb_0007);
     slaveWriteMemory(1, 7, 32'hbbbb_0008);
 
-    slaveWriteMemory(2, 0, 32'hbbbb_0001);
-    slaveWriteMemory(2, 1, 32'hbbbb_0002);
-    slaveWriteMemory(2, 2, 32'hbbbb_0003);
-    slaveWriteMemory(2, 3, 32'hbbbb_0004);
-    slaveWriteMemory(2, 4, 32'hbbbb_0005);
-    slaveWriteMemory(2, 5, 32'hbbbb_0006);
-    slaveWriteMemory(2, 6, 32'hbbbb_0007);
-    slaveWriteMemory(2, 7, 32'hbbbb_0008);
+    // slaveWriteMemory(2, 0, 32'hbbbb_0001);
+    // slaveWriteMemory(2, 1, 32'hbbbb_0002);
+    // slaveWriteMemory(2, 2, 32'hbbbb_0003);
+    // slaveWriteMemory(2, 3, 32'hbbbb_0004);
+    // slaveWriteMemory(2, 4, 32'hbbbb_0005);
+    // slaveWriteMemory(2, 5, 32'hbbbb_0006);
+    // slaveWriteMemory(2, 6, 32'hbbbb_0007);
+    // slaveWriteMemory(2, 7, 32'hbbbb_0008);
 
-    slaveWriteMemory(3, 0, 32'hbbbb_0001);
-    slaveWriteMemory(3, 1, 32'hbbbb_0002);
-    slaveWriteMemory(3, 2, 32'hbbbb_0003);
-    slaveWriteMemory(3, 3, 32'hbbbb_0004);
-    slaveWriteMemory(3, 4, 32'hbbbb_0005);
-    slaveWriteMemory(3, 5, 32'hbbbb_0006);
-    slaveWriteMemory(3, 6, 32'hbbbb_0007);
-    slaveWriteMemory(3, 7, 32'hbbbb_0008);
+    // slaveWriteMemory(3, 0, 32'hbbbb_0001);
+    // slaveWriteMemory(3, 1, 32'hbbbb_0002);
+    // slaveWriteMemory(3, 2, 32'hbbbb_0003);
+    // slaveWriteMemory(3, 3, 32'hbbbb_0004);
+    // slaveWriteMemory(3, 4, 32'hbbbb_0005);
+    // slaveWriteMemory(3, 5, 32'hbbbb_0006);
+    // slaveWriteMemory(3, 6, 32'hbbbb_0007);
+    // slaveWriteMemory(3, 7, 32'hbbbb_0008);
     fork
         begin 
-            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr(32'h0000_0000), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(0), .transID(0), .transAddr(32'h0000_0000), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
 
         begin
-            masterReadTransaction(.masterIndex(3), .transID(1), .transAddr(32'hC000_0000), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(1), .memAddr(0));
+            masterReadTransaction(.masterIndex(1), .transID(1), .transAddr({1, {31'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(1), .memAddr(0));
             delayNs(SYSTEM_CLOCK_PERIOD/2 * 10);
         end
     join
@@ -987,16 +987,16 @@ initial begin : main
     $display("TESTCASE 6: 4 READ TRANSACTION TO 4 DIFFRENT SLAVE FROM 2 MASTER AT SAME TIME");
     fork
         begin
-            masterReadTransaction(.masterIndex(2), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(2), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(2), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(2), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(0), .transID(0), .transAddr({0,{31'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(0), .transID(1), .transAddr({1,{31'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            //masterReadTransaction(.masterIndex(2), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            //masterReadTransaction(.masterIndex(2), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
         end
         begin
-            masterReadTransaction(.masterIndex(3), .transID(0), .transAddr({00,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(3), .transID(1), .transAddr({01,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(3), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
-            masterReadTransaction(.masterIndex(3), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(1), .transID(0), .transAddr({0,{31'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            masterReadTransaction(.masterIndex(1), .transID(1), .transAddr({1,{31'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            //masterReadTransaction(.masterIndex(3), .transID(2), .transAddr({02,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
+            //masterReadTransaction(.masterIndex(3), .transID(3), .transAddr({03,{30'd0}}), .transLen(7), .transSize(3'd2), .transBurst(2'd1), .transQoS(0), .memAddr(0));
         
         end
     join

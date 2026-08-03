@@ -199,12 +199,14 @@ begin : AR_FIFO_GEN
 
     fifo #(
         .DATA_WIDTH(AR_FIFO_WIDTH),
-        .FIFO_DEPTH(FIFO_DEPTH)
+        //.FIFO_DEPTH(FIFO_DEPTH)
+        .DEPTH(FIFO_DEPTH),
+        .ADDR_WIDTH($clog2(FIFO_DEPTH))
     ) u_AR_fifo (
         .clk        (ACLK_i),
         .rst_n      (ARESETn_i),
         // Push từ Master
-        .data_i(
+        .din(
             {
                 ma_ARID_i[ar_idx*TRANS_MST_ID_W +: TRANS_MST_ID_W],
                 ma_ARADDR_i[ar_idx*ADDR_WIDTH +:ADDR_WIDTH],
@@ -214,21 +216,23 @@ begin : AR_FIFO_GEN
                 ma_ARQOS_i[ar_idx*TRANS_QOS_W +:TRANS_QOS_W]
             }
         ),
-        .wr_valid_i(
+        .wr_en(
             ar_fifo_wr_en[ar_idx]
         ),
         // Pop bởi AR_dsp_slv_channel
-        .rd_valid_i(
+        .rd_en(
             ar_fifo_rd_en[ar_idx]
         ),
-        .data_o(
+        .dout(
             ar_fifo_data_o[ar_idx]
         ),
         .empty_o          (ar_fifo_empty[ar_idx]),
         .full_o           (ar_fifo_full[ar_idx]),
-        .almost_empty_o   (),
-        .almost_full_o    (),
-        .counter          ()
+        // .almost_empty_o   (),
+        // .almost_full_o    (),
+        // .counter          ()
+        .wr_rst_busy(),
+        .rd_rst_busy()
     );
 
 end
@@ -326,13 +330,15 @@ begin : AW_FIFO_GEN
 
     fifo #(
         .DATA_WIDTH(AW_FIFO_WIDTH),
-        .FIFO_DEPTH(FIFO_DEPTH)
+        //.FIFO_DEPTH(FIFO_DEPTH)
+        .DEPTH(FIFO_DEPTH),
+        .ADDR_WIDTH($clog2(FIFO_DEPTH))
     ) u_AW_fifo (
 
         .clk        (ACLK_i),
         .rst_n      (ARESETn_i),
         // Push từ Master
-        .data_i(
+        .din(
             {
                 ma_AWID_i[aw_idx*TRANS_MST_ID_W +: TRANS_MST_ID_W],
                 ma_AWADDR_i[aw_idx*ADDR_WIDTH +:ADDR_WIDTH],
@@ -342,15 +348,17 @@ begin : AW_FIFO_GEN
                 ma_AWQOS_i[aw_idx*TRANS_QOS_W +:TRANS_QOS_W]
             }
         ),
-        .wr_valid_i(aw_fifo_wr_en[aw_idx]),
+        .wr_en(aw_fifo_wr_en[aw_idx]),
         // Pop bởi AR_dsp_slv_channel
-        .rd_valid_i(aw_fifo_rd_en[aw_idx]),
-        .data_o(aw_fifo_data_o[aw_idx]),
+        .rd_en(aw_fifo_rd_en[aw_idx]),
+        .dout(aw_fifo_data_o[aw_idx]),
         .empty_o          (aw_fifo_empty[aw_idx]),
         .full_o           (aw_fifo_full[aw_idx]),
-        .almost_empty_o   (),
-        .almost_full_o    (),
-        .counter          ()
+        // .almost_empty_o   (),
+        // .almost_full_o    (),
+        // .counter          ()
+        .wr_rst_busy(),
+        .rd_rst_busy()
     );
 
 end
@@ -444,7 +452,9 @@ begin : W_FIFO_GEN
 
     fifo #(
         .DATA_WIDTH(W_FIFO_WIDTH),
-        .FIFO_DEPTH(FIFO_DEPTH)
+        //.FIFO_DEPTH(FIFO_DEPTH)
+        .DEPTH(FIFO_DEPTH),
+        .ADDR_WIDTH($clog2(FIFO_DEPTH))
     ) u_W_fifo (
 
         .clk        (ACLK_i),
@@ -452,7 +462,7 @@ begin : W_FIFO_GEN
 
         // Push từ Master
 
-        .data_i(
+        .din(
             {
                 ma_WDATA_i[
                     w_idx*DATA_WIDTH +:
@@ -462,17 +472,19 @@ begin : W_FIFO_GEN
                 ma_WLAST_i[w_idx]
             }
         ),
-        .wr_valid_i(w_fifo_wr_en[w_idx]),
+        .wr_en(w_fifo_wr_en[w_idx]),
         // Pop bởi W_dsp_slv_channel
-        .rd_valid_i(w_fifo_rd_en[w_idx]),
+        .rd_en(w_fifo_rd_en[w_idx]),
 
-        .data_o(w_fifo_data_o[w_idx]),
+        .dout(w_fifo_data_o[w_idx]),
 
         .empty_o          (w_fifo_empty[w_idx]),
         .full_o           (w_fifo_full[w_idx]),
-        .almost_empty_o   (),
-        .almost_full_o    (),
-        .counter          ()
+        // .almost_empty_o   (),
+        // .almost_full_o    (),
+        // .counter          ()
+        .wr_rst_busy(),
+        .rd_rst_busy()
     );
 
 end
