@@ -86,3 +86,40 @@ cmake-build-*/
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Vivado log, journal, and trace files
+*.log
+*.jou
+*.str
+*.pb
+*.wdb
+*.dir/
+
+# Temporary and cache directories
+.Xil/
+hd_visual/
+.cache/
+
+# Generated project run and simulation folders
+*.runs/
+*.sim/
+*.hw/
+*.ip_user_files/
+*.gen/
+
+# Hardware export and debug files
+*.xsa
+*.hdf
+*.sdk/
+*.ltx
+
+# Generated bitstreams and binaries
+*.bit
+*.bin
+*.sysdef
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+AXI4Interconnect/AXI4Interconnect.cache/

@@ -22,7 +22,7 @@ module ax_decoder #(
     // -------------------------------------------------------------------------
     // Combinational Address Decoding Logic
     // -------------------------------------------------------------------------
-    assign slave_id_o = AxADDR_i[16-:SLAVE_ID_WIDTH];
+    assign slave_id_o = AxADDR_i[(ADDR_WIDTH-1)-:SLAVE_ID_WIDTH];
 	assign transaction_id_o = AxID_i;
 	assign qos_o = AxQOS_i;
 
