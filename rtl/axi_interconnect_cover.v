@@ -21,105 +21,178 @@ module axi_interconnect_cover #(
     //------------------------------------------------------------
     // Global
     //------------------------------------------------------------
-    input  wire                             ACLK_i,
-    input  wire                             ARESETn_i,
+    input                              ACLK_i,
+    input                              ARESETn_i,
 
     //------------------------------------------------------------
     // Select Master / Slave
     //------------------------------------------------------------
-    input  wire [MST_ID_W-1:0]              master_id_i,
-    input  wire [SLV_ID_W-1:0]              slave_id_i,
+    input  [MST_ID_W-1:0]              master_id_i,
+    input  [SLV_ID_W-1:0]              slave_id_i,
 
     //============================================================
     //                External Master Interface
     //============================================================
 
     //---------------- AW ----------------
-    input  wire [TRANS_MST_ID_W-1:0]        m_AWID_i,
-    input  wire [ADDR_WIDTH-1:0]            m_AWADDR_i,
-    input  wire [TRANS_DATA_LEN_W-1:0]      m_AWLEN_i,
-    input  wire [TRANS_DATA_SIZE_W-1:0]     m_AWSIZE_i,
-    input  wire [TRANS_BURST_W-1:0]         m_AWBURST_i,
-    input  wire [TRANS_QOS_W-1:0]           m_AWQOS_i,
-    input  wire                             m_AWVALID_i,
-    output wire                             m_AWREADY_o,
+    input  [TRANS_MST_ID_W-1:0]        m_AWID_i,
+    input  [ADDR_WIDTH-1:0]            m_AWADDR_i,
+    input  [TRANS_DATA_LEN_W-1:0]      m_AWLEN_i,
+    input  [TRANS_DATA_SIZE_W-1:0]     m_AWSIZE_i,
+    input  [TRANS_BURST_W-1:0]         m_AWBURST_i,
+    input  [TRANS_QOS_W-1:0]           m_AWQOS_i,
+    input                              m_AWVALID_i,
+    output                             m_AWREADY_o,
 
     //---------------- W -----------------
-    input  wire [DATA_WIDTH-1:0]            m_WDATA_i,
-    input  wire                             m_WLAST_i,
-    input  wire                             m_WVALID_i,
-    output wire                             m_WREADY_o,
+    input  [DATA_WIDTH-1:0]            m_WDATA_i,
+    input                              m_WLAST_i,
+    input                              m_WVALID_i,
+    output                             m_WREADY_o,
 
     //---------------- B -----------------
-    output wire [TRANS_MST_ID_W-1:0]        m_BID_o,
-    output wire [TRANS_WR_RESP_W-1:0]       m_BRESP_o,
-    output wire                             m_BVALID_o,
-    input  wire                             m_BREADY_i,
+    output [TRANS_MST_ID_W-1:0]        m_BID_o,
+    output [TRANS_WR_RESP_W-1:0]       m_BRESP_o,
+    output                             m_BVALID_o,
+    input                              m_BREADY_i,
 
     //---------------- AR ----------------
-    input  wire [TRANS_MST_ID_W-1:0]        m_ARID_i,
-    input  wire [ADDR_WIDTH-1:0]            m_ARADDR_i,
-    input  wire [TRANS_DATA_LEN_W-1:0]      m_ARLEN_i,
-    input  wire [TRANS_DATA_SIZE_W-1:0]     m_ARSIZE_i,
-    input  wire [TRANS_BURST_W-1:0]         m_ARBURST_i,
-    input  wire [TRANS_QOS_W-1:0]           m_ARQOS_i,
-    input  wire                             m_ARVALID_i,
-    output wire                             m_ARREADY_o,
+    input  [TRANS_MST_ID_W-1:0]        m_ARID_i,
+    input  [ADDR_WIDTH-1:0]            m_ARADDR_i,
+    input  [TRANS_DATA_LEN_W-1:0]      m_ARLEN_i,
+    input  [TRANS_DATA_SIZE_W-1:0]     m_ARSIZE_i,
+    input  [TRANS_BURST_W-1:0]         m_ARBURST_i,
+    input  [TRANS_QOS_W-1:0]           m_ARQOS_i,
+    input                              m_ARVALID_i,
+    output                             m_ARREADY_o,
 
     //---------------- R -----------------
-    output wire [TRANS_MST_ID_W-1:0]        m_RID_o,
-    output wire [DATA_WIDTH-1:0]            m_RDATA_o,
-    output wire [TRANS_WR_RESP_W-1:0]       m_RRESP_o,
-    output wire                             m_RLAST_o,
-    output wire                             m_RVALID_o,
-    input  wire                             m_RREADY_i,
+    output [TRANS_MST_ID_W-1:0]        m_RID_o,
+    output [DATA_WIDTH-1:0]            m_RDATA_o,
+    output [TRANS_WR_RESP_W-1:0]       m_RRESP_o,
+    output                             m_RLAST_o,
+    output                             m_RVALID_o,
+    input                              m_RREADY_i,
 
     //============================================================
     //                External Slave Interface
     //============================================================
 
     //---------------- AW ----------------
-    output wire [MST_ID_W+TRANS_MST_ID_W-1:0] s_AWID_o,
-    output wire [ADDR_WIDTH-1:0]              s_AWADDR_o,
-    output wire [TRANS_DATA_LEN_W-1:0]        s_AWLEN_o,
-    output wire [TRANS_DATA_SIZE_W-1:0]       s_AWSIZE_o,
-    output wire [TRANS_BURST_W-1:0]           s_AWBURST_o,
-    output wire [TRANS_QOS_W-1:0]             s_AWQOS_o,
-    output wire                               s_AWVALID_o,
-    input  wire                               s_AWREADY_i,
+    output [MST_ID_W+TRANS_MST_ID_W-1:0] s_AWID_o,
+    output [ADDR_WIDTH-1:0]              s_AWADDR_o,
+    output [TRANS_DATA_LEN_W-1:0]        s_AWLEN_o,
+    output [TRANS_DATA_SIZE_W-1:0]       s_AWSIZE_o,
+    output [TRANS_BURST_W-1:0]           s_AWBURST_o,
+    output [TRANS_QOS_W-1:0]             s_AWQOS_o,
+    output                               s_AWVALID_o,
+    input                                s_AWREADY_i,
 
     //---------------- W -----------------
-    output wire [DATA_WIDTH-1:0]              s_WDATA_o,
-    output wire                               s_WLAST_o,
-    output wire                               s_WVALID_o,
-    input  wire                               s_WREADY_i,
+    output [DATA_WIDTH-1:0]              s_WDATA_o,
+    output                               s_WLAST_o,
+    output                               s_WVALID_o,
+    input                                s_WREADY_i,
 
     //---------------- B -----------------
-    input  wire [MST_ID_W+TRANS_MST_ID_W-1:0] s_BID_i,
-    input  wire [TRANS_WR_RESP_W-1:0]         s_BRESP_i,
-    input  wire                               s_BVALID_i,
-    output wire                               s_BREADY_o,
+    input  [MST_ID_W+TRANS_MST_ID_W-1:0] s_BID_i,
+    input  [TRANS_WR_RESP_W-1:0]         s_BRESP_i,
+    input                                s_BVALID_i,
+    output                               s_BREADY_o,
 
     //---------------- AR ----------------
-    output wire [MST_ID_W+TRANS_MST_ID_W-1:0] s_ARID_o,
-    output wire [ADDR_WIDTH-1:0]              s_ARADDR_o,
-    output wire [TRANS_DATA_LEN_W-1:0]        s_ARLEN_o,
-    output wire [TRANS_DATA_SIZE_W-1:0]       s_ARSIZE_o,
-    output wire [TRANS_BURST_W-1:0]           s_ARBURST_o,
-    output wire [TRANS_QOS_W-1:0]             s_ARQOS_o,
-    output wire                               s_ARVALID_o,
-    input  wire                               s_ARREADY_i,
+    output [MST_ID_W+TRANS_MST_ID_W-1:0] s_ARID_o,
+    output [ADDR_WIDTH-1:0]              s_ARADDR_o,
+    output [TRANS_DATA_LEN_W-1:0]        s_ARLEN_o,
+    output [TRANS_DATA_SIZE_W-1:0]       s_ARSIZE_o,
+    output [TRANS_BURST_W-1:0]           s_ARBURST_o,
+    output [TRANS_QOS_W-1:0]             s_ARQOS_o,
+    output                               s_ARVALID_o,
+    input                                s_ARREADY_i,
 
     //---------------- R -----------------
-    input  wire [MST_ID_W+TRANS_MST_ID_W-1:0] s_RID_i,
-    input  wire [DATA_WIDTH-1:0]              s_RDATA_i,
-    input  wire [TRANS_WR_RESP_W-1:0]         s_RRESP_i,
-    input  wire                               s_RLAST_i,
-    input  wire                               s_RVALID_i,
-    output wire                               s_RREADY_o
+    input  [MST_ID_W+TRANS_MST_ID_W-1:0] s_RID_i,
+    input  [DATA_WIDTH-1:0]              s_RDATA_i,
+    input  [TRANS_WR_RESP_W-1:0]         s_RRESP_i,
+    input                                s_RLAST_i,
+    input                                s_RVALID_i,
+    output                               s_RREADY_o
 );
 
+    // // ---------------- Master side channel regs (theo MST_AMT) ------------
+    // reg [TRANS_MST_ID_W*MST_AMT-1:0]    r_m_AWID;
+    // reg [ADDR_WIDTH*MST_AMT-1:0]        r_m_AWADDR;
+    // reg [TRANS_DATA_LEN_W*MST_AMT-1:0]  r_m_AWLEN;
+    // reg [TRANS_DATA_SIZE_W*MST_AMT-1:0] r_m_AWSIZE;
+    // reg [TRANS_BURST_W*MST_AMT-1:0]     r_m_AWBURST;
+    // reg [TRANS_QOS_W*MST_AMT-1:0]       r_m_AWQOS;
+    // reg [MST_AMT-1:0]                   r_m_AWVALID;
+    // reg [MST_AMT-1:0]                   r_m_AWREADY;
 
+    // reg [DATA_WIDTH*MST_AMT-1:0]        r_m_WDATA;
+    // reg [MST_AMT-1:0]                   r_m_WLAST;
+    // reg [MST_AMT-1:0]                   r_m_WVALID;
+    // reg [MST_AMT-1:0]                   r_m_WREADY;
+
+    // reg [TRANS_MST_ID_W*MST_AMT-1:0]    r_m_BID;
+    // reg [TRANS_WR_RESP_W*MST_AMT-1:0]   r_m_BRESP;
+    // reg [MST_AMT-1:0]                   r_m_BVALID;
+    // reg [MST_AMT-1:0]                   r_m_BREADY;
+
+    // reg [TRANS_MST_ID_W*MST_AMT-1:0]    r_m_ARID;
+    // reg [ADDR_WIDTH*MST_AMT-1:0]        r_m_ARADDR;
+    // reg [TRANS_DATA_LEN_W*MST_AMT-1:0]  r_m_ARLEN;
+    // reg [TRANS_DATA_SIZE_W*MST_AMT-1:0] r_m_ARSIZE;
+    // reg [TRANS_BURST_W*MST_AMT-1:0]     r_m_ARBURST;
+    // reg [TRANS_QOS_W*MST_AMT-1:0]       r_m_ARQOS;
+    // reg [MST_AMT-1:0]                   r_m_ARVALID;
+    // reg [MST_AMT-1:0]                   r_m_ARREADY;
+
+    // reg [TRANS_MST_ID_W*MST_AMT-1:0]    r_m_RID;
+    // reg [DATA_WIDTH*MST_AMT-1:0]        r_m_RDATA;
+    // reg [TRANS_WR_RESP_W*MST_AMT-1:0]   r_m_RRESP;
+    // reg [MST_AMT-1:0]                   r_m_RLAST;
+    // reg [MST_AMT-1:0]                   r_m_RVALID;
+    // reg [MST_AMT-1:0]                   r_m_RREADY;
+
+    // // ---------------- Slave side channel regs (theo SLV_AMT) -------------
+    // reg [(TRANS_MST_ID_W+MST_ID_W)*SLV_AMT-1:0]          r_s_AWID;
+    // reg [ADDR_WIDTH*SLV_AMT-1:0]        r_s_AWADDR;
+    // reg [TRANS_DATA_LEN_W*SLV_AMT-1:0]  r_s_AWLEN;
+    // reg [TRANS_DATA_SIZE_W*SLV_AMT-1:0] r_s_AWSIZE;
+    // reg [TRANS_BURST_W*SLV_AMT-1:0]     r_s_AWBURST;
+    // reg [TRANS_QOS_W*SLV_AMT-1:0]       r_s_AWQOS;
+    // reg [SLV_AMT-1:0]                   r_s_AWVALID;
+    // reg [SLV_AMT-1:0]                   r_s_AWREADY;
+
+    // reg [DATA_WIDTH*SLV_AMT-1:0]        r_s_WDATA;
+    // reg [SLV_AMT-1:0]                   r_s_WLAST;
+    // reg [SLV_AMT-1:0]                   r_s_WVALID;
+    // reg [SLV_AMT-1:0]                   r_s_WREADY;
+
+    // reg [(TRANS_MST_ID_W+MST_ID_W)*SLV_AMT-1:0]          r_s_BID;
+    // reg [TRANS_WR_RESP_W*SLV_AMT-1:0]   r_s_BRESP;
+    // reg [SLV_AMT-1:0]                   r_s_BVALID;
+    // reg [SLV_AMT-1:0]                   r_s_BREADY;
+
+    // reg [(TRANS_MST_ID_W+MST_ID_W)*SLV_AMT-1:0]          r_s_ARID;
+    // reg [ADDR_WIDTH*SLV_AMT-1:0]        r_s_ARADDR;
+    // reg [TRANS_DATA_LEN_W*SLV_AMT-1:0]  r_s_ARLEN;
+    // reg [TRANS_DATA_SIZE_W*SLV_AMT-1:0] r_s_ARSIZE;
+    // reg [TRANS_BURST_W*SLV_AMT-1:0]     r_s_ARBURST;
+    // reg [TRANS_QOS_W*SLV_AMT-1:0]       r_s_ARQOS;
+    // reg [SLV_AMT-1:0]                   r_s_ARVALID;
+    // reg [SLV_AMT-1:0]                   r_s_ARREADY;
+
+    // reg [(TRANS_MST_ID_W+MST_ID_W)*SLV_AMT-1:0]          r_s_RID;
+    // reg [DATA_WIDTH*SLV_AMT-1:0]        r_s_RDATA;
+    // reg [TRANS_WR_RESP_W*SLV_AMT-1:0]   r_s_RRESP;
+    // reg [SLV_AMT-1:0]                   r_s_RLAST;
+    // reg [SLV_AMT-1:0]                   r_s_RVALID;
+    // reg [SLV_AMT-1:0]                   r_s_RREADY;
+    
+    
+    
     // ---------------- Master side channel wires (theo MST_AMT) ------------
     wire [TRANS_MST_ID_W*MST_AMT-1:0]    w_m_AWID;
     wire [ADDR_WIDTH*MST_AMT-1:0]        w_m_AWADDR;
